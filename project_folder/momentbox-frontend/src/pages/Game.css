@@ -1,0 +1,279 @@
+/* ===== 필수 리셋 ===== */
+html, body, #root { height: 100%; margin: 0; }
+
+/* ===== 전역 변수 ===== */
+:root{
+  --page-bg:#f8f1e6;
+  --sky-h:24vh;
+
+  --road-h:25vh;
+  --curb-h:14px;
+  --asphalt-1:#7a7f86;
+  --asphalt-2:#686d74;
+  --asphalt-noise:rgba(255,255,255,.05);
+
+  --lane:#f5f2a6;
+  --lane-w:8px;
+  --dash-l:56px;
+  --dash-gap:36px;
+  --edge-lane-w:6px;
+
+  --curb-top:#d9d9d9;
+  --curb-front:#bababa;
+  --curb-shadow:rgba(0,0,0,.25);
+
+  --sky-top:#cfe9ff;
+  --sky-bottom:#eaf6ff;
+  --cloud:#fff;
+  --cloud-shadow:rgba(0,0,0,.08);
+
+  /* ===== 퀘스트 패널 색상 변수 ===== */
+  --qp-bg:#ffffff;
+  --qp-border:#dadce0;
+  --qp-shadow:0 10px 24px rgba(0,0,0,.10);
+
+  --qc-bg:#fafbff;
+  --qc-border:#e7eaf3;
+
+  --bar-bg:#edf1f7;
+  --bar-fill:#7aa7ff;
+  --bar-fill-done:#80c27c;
+
+  --badge:#fff6ba;
+  --badge-fg:#000000;
+
+  --btn:#ffffff;
+  --btn-fg:#333;
+  --btn-border:#cdd3dd;
+  --btn-hover:#f3f5f9;
+
+  --btn-claim:#1f7a36;
+  --btn-claim-fg:#fff;
+}
+
+/* ===== 장면 래퍼/하늘/구름/벽/도로 등 (기존 그대로) ===== */
+.game-wrap{
+  position:relative;
+  min-height:100vh;
+  width:100%;
+  overflow:hidden;
+  background:var(--page-bg);
+}
+
+.game-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/corn.png'), /* 옥수수 이미지 */
+                    url('../assets/dinointrash.png'), /* 쓰레기통 공룡 이미지 */
+                    url('../assets/dinowithdog.png'), /* 강아지와 공룡 이미지 */
+                    url('../assets/fire.png'), /* 불 이미지 */
+                    url('../assets/paintingdog.png'), /* 그림 그리는 강아지 이미지 */
+                    url('../assets/smile.png'); /* 웃는 얼굴 이미지 */
+  background-repeat: no-repeat;
+  /* 각 이미지별 크기 (순서대로 corn, dinointrash, dinowithdog, fire, paintingdog, smile) */
+  background-size:
+    180px, /* corn.png 크기 */
+    200px, /* dinointrash.png 크기 */
+    500px, /* dinowithdog.png 크기 */
+    90px,  /* fire.png 크기 */
+    200px, /* paintingdog.png 크기 */
+    110px; /* smile.png 크기 */
+  /* 각 이미지별 위치 (순서대로 corn, dinointrash, dinowithdog, fire, paintingdog, smile) */
+  background-position:
+    5% 80%,   /* corn.png 위치 (가로, 세로) */
+    85% 75%,  /* dinointrash.png 위치 (가로, 세로) */
+    15% 90%,  /* dinowithdog.png 위치 (가로, 세로) */
+    95% 50%,  /* fire.png 위치 (가로, 세로) */
+    95% 80%,  /* paintingdog.png 위치 (가로, 세로) */
+    90% 40%;  /* smile.png 위치 (가로, 세로) */
+  background-attachment: fixed; /* 스크롤 시 배경 고정 */
+  z-index: 9999; /* 모든 요소 위에 오도록 z-index를 매우 높게 설정 */
+  pointer-events: none; /* 배경 이미지 클릭 방지 */
+}
+.sky{ position:absolute; left:0; right:0; top:0; height:var(--sky-h); z-index:0; background:linear-gradient(180deg,var(--sky-top),var(--sky-bottom)); }
+.cloud{ position:absolute; width:220px; height:70px; background:var(--cloud); border-radius:999px; box-shadow:40px -10px 0 10px var(--cloud),100px -8px 0 18px var(--cloud),0 8px 12px var(--cloud-shadow); opacity:.95; filter:blur(.2px); animation:cloud-move 36s linear infinite; pointer-events:none; }
+.cloud--1{ left:6%; top:20%; transform:scale(1.0); animation-delay:0s; }
+.cloud--2{ left:38%; top:50%; transform:scale(1.15); animation-delay:6s; }
+.cloud--3{ left:70%; top:35%; transform:scale(.9); animation-delay:12s; }
+@keyframes cloud-move{ 0%{ transform:translateX(-4vw) } 100%{ transform:translateX(4vw) } }
+
+.wall{ position:absolute; left:0; right:0; top:var(--sky-h); width:120%; height:50vh; object-fit:cover; z-index:1; user-select:none; pointer-events:none; }
+
+.road{ position:absolute; left:0; right:0; bottom:0; height:var(--road-h); display:grid; grid-template-rows:var(--curb-h) 1fr; z-index:2; pointer-events:none; }
+.curb{ background:linear-gradient(180deg,var(--curb-top),var(--curb-front)); border-top:1px solid #eee; border-bottom:1px solid #9b9b9b; box-shadow:0 3px 8px var(--curb-shadow); }
+.asphalt{ position:relative; overflow:hidden; background:linear-gradient(180deg,var(--asphalt-1),var(--asphalt-2)); }
+.asphalt::before{ content:""; position:absolute; inset:0; background:repeating-linear-gradient(45deg,var(--asphalt-noise) 0px,var(--asphalt-noise) 2px,transparent 2px,transparent 4px); opacity:.35; mix-blend-mode:soft-light; pointer-events:none; }
+.lane{ position:absolute; left:50%; transform:translateX(-50%); top:50%; pointer-events:none; }
+.lane--center{ height:var(--lane-w); width:120%; top:45%; background:repeating-linear-gradient(to right,var(--lane) 0 var(--dash-l),transparent var(--dash-l) calc(var(--dash-l) + var(--dash-gap))); filter:drop-shadow(0 1px 1px rgba(0,0,0,.25)); opacity:.9; }
+
+/* ===== 포스터(기존) ===== */
+.poster{ position:absolute; z-index:2; width:var(--poster-w,170px); min-height:180px; padding:14px 16px; background:#fff; color:#222; border:2px solid #222; border-radius:6px; transform:rotate(var(--poster-rot,0deg)); user-select:none; pointer-events:auto; cursor:zoom-in; background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(0,0,0,.04)); background-blend-mode:multiply; box-shadow:0 6px 14px rgba(0,0,0,.35); opacity:.97; }
+.poster::before{ content:""; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-8deg); width:35px; height:15px; background:#eae8d7; box-shadow:0 4px 6px rgba(0,0,0,.25); opacity:.9; border-radius:2px; }
+.poster--9{ top:calc(var(--sky-h) + 5vh); left:3%; border:none; --poster-bg:#fff0f0; --poster-border:#e89a9a; --poster-fg:#5a5a5a; --poster-rot:2deg; }
+.pframe{ background:#fff; padding:10px; margin-bottom:8px; }
+.pimg{ display:block; width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:4px; user-select:none; pointer-events:none; }
+.pcap{ text-align:center; }
+.ptitle{ margin:0; font-weight:700; font-size:16px; line-height:1.2; letter-spacing:.2px; }
+
+/* ===== 라이트박스(기존) ===== */
+.lightbox{ position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; }
+.lb-polaroid{ position:relative; pointer-events:auto; background:#fff; border-radius:10px; padding:10px 14px 14px; box-shadow:0 8px 30px rgba(255,255,255,.35); width:clamp(220px,36vw,480px); max-width:90vw; max-height:80vh; display:flex; flex-direction:column; align-items:center; gap:8px; animation:lb-pop .15s ease-out; }
+.lb-center{ position:fixed; inset:0; z-index:9999; display:grid; place-items:center; pointer-events:none; }
+.lb-photo{ width:100%; background:#fff; border:2px solid #000; border-radius:8px; padding:8px; box-shadow:0 6px 16px rgba(0,0,0,.18); }
+.lightbox__img{ display:block; width:100%; height:auto; aspect-ratio:1/1; object-fit:contain; border-radius:6px; user-select:none; pointer-events:none; }
+.lb-cap{ text-align:center; width:100%; }
+.lb-title{ display:inline-block; background:#ffffff; color:#ffffff; padding:4px 8px; font:800 16px/1.1 system-ui,sans-serif; border-radius:6px; margin-top:4px; }
+.lb-desc{ display:grid; gap:4px; margin-top:4px; }
+.lb-desc__line{ margin:0; background:#ffffff; color:#000; padding:5px 7px; font:600 12px/1.35 system-ui,sans-serif; border-radius:6px; }
+.lightbox__close{ position:absolute; top:6px; right:8px; width:26px; height:26px; font-size:18px; line-height:1; background:rgba(0,0,0,.65); color:#fff; border:none; border-radius:6px; cursor:pointer; }
+.lightbox__close:hover{ background:rgba(0,0,0,.85); }
+@keyframes lb-pop{ from{ transform:scale(.98); opacity:0 } to{ transform:scale(1); opacity:1 } }
+
+/* ===== 메인 배너 (크기 확대) ===== */
+.main-banner{
+  position:absolute;
+  top:calc(var(--sky-h) + 3vh);       /* 살짝 위로 */
+  left:50%;
+  transform:translateX(-50%);
+  width:min(92%, 880px);              /* ← 폭 확대 */
+  padding:28px 32px;                  /* ← 패딩 확대 */
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
+  text-align:center;
+  z-index:3;                          /* 퀘스트 패널 위로 겹치지 않게 3 */
+  border:2px solid #000;
+}
+.main-banner p{
+  margin:0;
+  font-size:20px;                     /* ← 글자 확대 */
+  font-weight:700;
+  color:#333;
+}
+
+/* =========================================================
+   퀘스트 패널 / 카드
+   ========================================================= */
+.quest-panel{
+  position:absolute;
+  top:calc(var(--sky-h) + 5vh);      /* 배너 아래로 */
+  left:50%;
+  transform: translateX(-50%);
+  width: min(120vw, 1000px);
+  max-height: calc(100vh - var(--sky-h) - 12vh - var(--road-h));
+  overflow:auto;
+  background: #f6ecda; /* Parchment color */
+ 
+  border-radius: 15px; /* Slightly less rounded */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.2);
+  z-index:3;
+  scrollbar-width: none; /* Firefox */
+}
+
+.quest-panel::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.quest-panel__hdr{
+  display:flex; align-items:center; justify-content:center;
+  padding:14px 16px;
+  border-top-left-radius:14px; border-top-right-radius:14px;
+}
+.quest-panel__title{
+  margin:0; font:800 22px/1 system-ui, sans-serif;
+}
+
+.quest-list{ display:grid; gap:10px; padding:12px; }
+
+.quest-card{
+  display:grid;
+  grid-template-columns: 60px 1fr auto;
+  gap:12px;
+  background:var(--qc-bg);
+  border:1px solid var(--qc-border);
+  border-radius:12px;
+  padding:12px;
+  align-items: center;
+}
+
+.q-img-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  overflow: hidden;
+}
+
+.q-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.quest-card.is-done{ background:#f4fff3; border-color:#d9f0d5; }
+
+.q-main{ display:grid; gap:10px; }
+.q-title{ font:700 14px/1.35 system-ui, sans-serif; color:#333; }
+
+.q-progress{ display:grid; gap:6px; }
+.q-bar{
+  position:relative; height:10px; background:var(--bar-bg);
+  border-radius:999px; overflow:hidden; box-shadow:inset 0 1px 2px rgba(0,0,0,.06);
+}
+.q-bar__fill{
+  position:absolute; left:0; top:0; bottom:0;
+  width:0%;
+  background:linear-gradient(90deg, var(--bar-fill), #9cc2ff);
+  border-radius:999px;
+  transition: width .25s ease;
+}
+.quest-card.is-done .q-bar__fill{ background:linear-gradient(90deg, var(--bar-fill-done), #a9d9a4); }
+
+.q-meta{ display:flex; justify-content:space-between; font:600 12px/1 system-ui, sans-serif; color:#666; }
+
+.q-side{ display:grid; align-content:center; justify-items:end; gap:8px; min-width:120px; }
+
+.q-reward{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px;
+  background:var(--badge);
+  color:var(--badge-fg);
+  border-radius:999px;
+  font:700 12px/1 system-ui, sans-serif;
+}
+.q-reward .paw{ filter:grayscale(0%); }
+
+.q-btn{
+  appearance:none; border:1px solid var(--btn-border);
+  background:var(--btn); color:var(--btn-fg);
+  font:700 12px/1 system-ui,sans-serif;
+  border-radius:10px; padding:8px 12px; cursor:pointer;
+}
+.q-btn:hover{ background:var(--btn-hover); }
+.q-btn--goto{ }
+.q-btn--ghost{ opacity:.8; }
+
+.q-btn--claim{
+  background:var(--btn-claim); color:var(--btn-claim-fg);
+  border-color:transparent;
+}
+.q-btn--claim:disabled{
+  background:#98caa3; color:#fff; cursor:default;
+}
+
+@media (max-width: 900px){
+  :root{ --sky-h:34vh; --road-h:30vh; --lane-w:6px; --dash-l:44px; --dash-gap:28px; }
+  .quest-panel{
+    right: 50%; transform: translateX(50%); /* 화면 중앙에 배치 */
+    top: calc(var(--sky-h) + 18vh);
+    width: min(96vw, 480px);
+  }
+}

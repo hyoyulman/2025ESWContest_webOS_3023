@@ -1,0 +1,351 @@
+:root{
+  --header-h: 72px;
+  --side-pad: 24px;
+  --gap: 12px;
+  --legend-w: 320px;
+  --weekday-h: 40px;
+  --title-h: 56px;
+  --bg: #faf5ef;
+  --card: #ffffff;
+  --border: rgba(0,0,0,0.08);
+  --text: #333;
+  --muted: #666;
+}
+
+/* 페이지 바닥까지 스크롤 시 배경색 유지 */
+html, body { background: var(--bg); }
+
+.calendar-page{
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: var(--bg);
+  padding: calc(var(--header-h) + 12px) var(--side-pad) 16px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title{
+  height: var(--title-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.page-title h1{
+  margin: 0;
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.page-title span {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  text-align: center;
+}
+
+.calendar-layout{
+  display: flex;
+  gap: 24px;
+  height: calc(100vh - var(--header-h) - 12px - var(--title-h) - 16px);
+  min-height: 420px;
+}
+
+.calendar-main{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.weekdays{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: center;
+  text-align: center;
+  height: var(--weekday-h);
+  margin-bottom: var(--gap);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.calendar-grid{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--gap);
+  grid-auto-rows: calc((100% - (var(--gap) * (var(--weeks) - 1))) / var(--weeks));
+}
+
+.day-cell{
+  position: relative;
+  background: var(--card);
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px var(--border) inset;
+  padding: 30px 10px 10px;
+  overflow: hidden;
+}
+.day-cell.empty{
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.date{
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* 오늘 날짜 셀 강조 */
+.day-cell.today-cell .date {
+  background-color: #00bcd4; /* 날짜 숫자에 시안색 배경 */
+  color: white; /* 흰색 글자 */
+  border-radius: 50%; /* 원형으로 */
+  width: 30px; /* 크기 조정 */
+  height: 30px; /* 크기 조정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* .day-cell 내에서 위치 지정 */
+  top: 5px; /* 필요에 따라 조정 */
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* 이벤트: 위에서부터 쌓이고, 가로 중앙 정렬 */
+.event {
+  margin: 4px auto 0;     /* 위 여백 + 가로 중앙 */
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.15rem;
+  width: 90%;
+  display: block;         /* auto margin 안정화 */
+
+  text-align: center;     /* ✅ 글씨를 중앙 정렬 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.event.설렘{ background:#cceeff; } /* 설렘 - Light Blue */
+.event.우울{ background:#d9f7d9; } /* 우울 - Light Green */
+.event.행복{ background:#ffe6cc; } /* 행복 - Light Orange */
+.event.피곤{ background:#ffd9d9; } /* 피곤 - Light Pink */
+.event.걱정{ background:#e6ccff; } /* 걱정 - Light Purple */
+
+/* 검색 이동 후 강조 */
+.event.pulse{
+  outline: 2px solid rgba(0,0,0,0.28);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.12);
+  transition: outline 120ms ease;
+}
+
+.calendar-legend {
+  width: var(--legend-w);
+  min-width: var(--legend-w);
+  text-align: center;           /* 전체 텍스트 중앙 정렬 */
+}
+
+.calendar-legend h3 {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.calendar-legend ul {
+  margin: 0 0 12px 0;
+  padding-left: 0;              /* 기본 들여쓰기 제거 */
+  line-height: 1.45rem;
+  font-size: 0.95rem;
+  list-style: none;             /* 불릿 제거 (원하면 유지 가능) */
+}
+
+.legend-item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 6px 0;
+  font-size: 0.9rem;
+  box-shadow: 0 0 0 1px var(--border) inset;
+}
+.legend-item.media{ background:#c6dee7; }
+.legend-item.social{ background:#d8c7f3; }
+.legend-item.post{ background:#f3c3d1; }
+.legend-item.video{ background:#f7d9b4; }
+.legend-item.설렘{ background:#cceeff; } /* 설렘 - Light Blue */
+.legend-item.우울{ background:#d9f7d9; } /* 우울 - Light Green */
+.legend-item.행복{ background:#ffe6cc; } /* 행복 - Light Orange */
+.legend-item.피곤{ background:#ffd9d9; } /* 피곤 - Light Pink */
+.legend-item.걱정{ background:#e6ccff; } /* 걱정 - Light Purple */
+
+@media (max-width: 1100px){
+  :root{ --legend-w: 100%; }
+  .calendar-layout{ flex-direction: column; }
+  .calendar-legend{ width: 100%; min-width: 0; order: 2; }
+}
+
+.title-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 16px;
+}
+.month-title{
+  margin:0;
+  font-size:2.2rem;
+  line-height:1;
+}
+.nav-btn{
+  width:36px; height:36px; border:none; border-radius:10px;
+  background:transparent; box-shadow:none;
+  font-size:1.1rem; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:var(--text);
+}
+.nav-btn:hover{
+  background: rgba(0,0,0,0.05);
+  transition: background 120ms ease;
+}
+
+/* ====== Search UI ====== */
+.search{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 12px;
+  position: relative;
+}
+.search .icon{
+  position: absolute;
+  left: 10px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+.search input[type="search"]{
+  width: 100%;
+  height: 36px;
+  padding: 0 12px 0 32px; /* 아이콘 공간 */
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+.search .clear-btn{
+  width: 36px; height: 36px; border: none; border-radius: 10px;
+  background: transparent; cursor: pointer; font-size: 1.1rem;
+}
+.search .clear-btn:hover{ background: rgba(0,0,0,0.05); }
+
+/* 결과 컨테이너: 항상 존재 → 흔들림 방지 */
+.search-results{
+  margin-top: 8px;
+  max-height: 36vh;
+  overflow: auto;
+  padding: 6px 2px 8px;
+  background: var(--bg);    /* 배경 유지 */
+  min-height: 40px;         /* 빈 상태 공간 확보 */
+  border-radius: 8px;
+}
+
+.result-item{
+  width: 100%;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 110px auto;
+  gap: 8px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+}
+.result-item:hover{ background: rgba(0,0,0,0.04); }
+.result-item .r-date{ font-weight: 700; color: var(--muted); }
+.result-item .r-title{ font-size: .95rem; line-height: 1.2rem; }
+
+/* type 뱃지 */
+.badge{
+  display: inline-block;
+  padding: 2px 8px; border-radius: 999px; font-size: .75rem;
+  margin-left: 6px;
+}
+.badge.설렘{ background:#cceeff; }
+.badge.우울{ background:#d9f7d9; }
+.badge.행복{ background:#ffe6cc; }
+.badge.피곤{ background:#ffd9d9; }
+.badge.걱정{ background:#e6ccff; }
+
+.more-events {
+  margin-top: 4px;
+  padding: 1px 3px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  font-size: 0.7rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.more-events:hover {
+  background-color: #e0e0e0;
+}
+
+.expanded-day-view {
+    position: absolute;
+    width: 300px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    z-index: 100;
+    padding: 12px;
+}
+
+.expanded-header {
+    display: flex;
+    justify-content: center; /* Center the content */
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    position: relative; /* For absolute positioning of the button */
+}
+
+.expanded-header h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.expanded-header button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.expanded-events .event {
+    margin-bottom: 4px;
+}
+
+/* Category list simple display */
+.category-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.category-list-container .legend-item {
+  margin: 0; /* Remove vertical margin */
+  padding: 4px 10px; /* Reduce padding */
+  font-size: 0.8rem; /* Reduce font size */
+}

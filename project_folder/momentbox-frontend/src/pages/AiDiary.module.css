@@ -1,0 +1,360 @@
+/* AiDiary.module.css */
+
+/* ===== 리셋: 불필요한 스크롤/여백 제거 ===== */
+html, body { height: 100%; margin: 0; }
+body { overflow: hidden; }
+
+/* ===== 변수 ===== */
+.wrap {
+  --wall: #bfe0f2;
+  --desk: #e9c9a3;
+  --horizon: 68vh;              /* 벽/책상 경계 높이 */
+  --scene-max: 1280px;
+
+  /* 크기 */
+  --monitor-w: clamp(900px, 90vw, 1800px);
+  --lamp-w: clamp(240px, 25vw, 400px);
+  --book2-w: clamp(220px, 20vw, 340px);
+  --book3-w: clamp(800px, 70vw, 1300px);
+  --keyboard-w: clamp(280px, 26vw, 420px);
+  --tablet-w: clamp(280px, 25vw, 420px);
+  --memo-w: clamp(80px, 8vw, 110px);
+
+  --border-color: #2b2b2b;
+  --border-thick: 4px;
+}
+
+/* ===== 배경 ===== */
+.wrap {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(var(--wall) 0 var(--horizon), var(--desk) 0 100%);
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;            /* 페이지 스크롤 방지 */
+}
+
+/* 경계선(전체 폭, 전폭 고정) */
+.wrap::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: var(--horizon);
+  height: var(--border-thick);
+  background: var(--border-color);
+  pointer-events: none;
+  z-index: 4;                  /* 오브젝트 아래 */
+}
+
+/* ===== 캔버스 ===== */
+.scene {
+  position: relative;
+  width: min(96vw, var(--scene-max));
+  aspect-ratio: 16 / 9;
+  overflow: visible;           /* ✅ 오브젝트 잘림 해소 (좌/우 안 잘리게) */
+}
+
+/* 공통 오브젝트 */
+.obj {
+  position: absolute;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ===== 개별 배치 (기존 값 유지) ===== */
+.monitor {
+  width: var(--monitor-w);
+  left: 53%;
+  bottom: -8%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.lamp {
+  width: var(--lamp-w);
+  right: -15%;
+  bottom: 5%;
+  z-index: 11;
+}
+
+.book2 {
+  width: var(--book2-w);
+  left: -12%;
+  bottom: 10%;
+  z-index: 9;
+}
+
+.book3 {
+  width: var(--book3-w);
+  left: -45%;
+  bottom: -40%;
+  z-index: 9;
+}
+
+.keyboard {
+  width: var(--keyboard-w);
+  left: 50%;
+  bottom: -10%;
+  transform: translateX(-50%);
+  z-index: 12;
+}
+
+.tablet {
+  width: var(--tablet-w);
+  left: 80%;
+  bottom: -13%;
+  transform: translateX(-50%);
+  z-index: 12;
+}
+
+.memo {
+  width: var(--memo-w);
+  left: 5%;
+  top: 12%;
+  z-index: 15;
+}
+
+/* 작은 화면 미세 보정 */
+@media (max-width: 740px) {
+  .wrap { --horizon: 66vh; }
+}
+
+/* 모니터 화면 설정*/
+.screen {
+  position: absolute;
+  top: 12%;
+  left: 15%;
+  width: 75%;
+  height: 65%;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.screenContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  overflow-y: auto;
+  width: 100%;
+  flex-grow: 0;          /* 🔧 위로 밀리는 것 방지 */
+  margin-block: auto;    /* 🔧 상/하 자동 여백 → 세로 중앙 정렬 */
+}
+
+.hashtagContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.screenTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 30px;
+}
+
+/* 브리핑 텍스트 */
+.briefingText {
+  font-size: 1.25rem;
+  color: white;
+  font-weight: 500;
+  line-height: 1.7;
+  margin-bottom: 30px;
+  max-width: 85%;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 25px 30px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* 해시태그 선택 */
+.hashtagList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 35px;
+  width: 100%; /* Ensure it takes full width to center content */
+}
+
+.tagBtn {
+  background-color: #fff;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  border-radius: 30px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tagBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.tagBtn.selectedTag {
+  color: white;
+  border-color: transparent;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.tagBtn.selectedTag.운동 { background-color: #cceeff; color: #00678a; }
+.tagBtn.selectedTag.공부 { background-color: #d9f7d9; color: #0b6b0b; }
+.tagBtn.selectedTag.여행 { background-color: #ffe6cc; color: #8a4d00; }
+.tagBtn.selectedTag.피곤 { background-color: #ffd9d9; color: #8a0000; }
+.tagBtn.selectedTag.행복 { background-color: #e6ccff; color: #5d008a; }
+
+/* 사진 선택 */
+.photoGrid {
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄로 표시 */
+  overflow-x: hidden; /* 가로 스크롤 숨김 */
+  overflow-y: auto; /* 세로 스크롤 추가 */
+  max-height: 30vh; /* 스크롤이 생길 높이 제한 */
+  -webkit-overflow-scrolling: touch;
+  gap: 18px;
+  width: 100%;
+  padding: 15px 24px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  align-items: center;
+  justify-content: center; /* 아이템 총폭 < 컨테이너 폭일 때 중앙 정렬 */
+}
+
+/* Hide scrollbar for a cleaner look */
+.photoGrid::-webkit-scrollbar {
+  display: none;
+}
+.photoGrid {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.photoThumb.active {
+  border-color: #007bff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.photoThumb:hover:not(.active) {
+  transform: scale(1.03);
+  border-color: rgba(0, 123, 255, 0.4);
+}
+
+/* 버튼 컨테이너: 간격만 유지 */
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;   /* 🔧 해시태그와 버튼 사이만 간격 */
+  padding-top: 0;     /* 불필요한 상단 패딩 제거 */
+}
+
+.primaryBtn, .secondaryBtn {
+  border: none;
+  border-radius: 10px;
+  padding: 14px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.primaryBtn {
+  background-color: #007bff;
+  color: white;
+}
+
+.primaryBtn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.2);
+}
+
+.primaryBtn:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.secondaryBtn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.secondaryBtn:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* 로딩 텍스트 & 스피너 */
+.loadingText {
+  font-size: 1.25rem;
+  color: #6c757d;
+}
+
+.loadingSpinner {
+  border: 5px solid rgba(0, 123, 255, 0.2);
+  border-top: 5px solid #007bff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.photoThumb {
+  cursor: pointer;
+  border: 3px solid transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  width: 120px; /* Fixed width */
+  height: 120px; /* Fixed height */
+  flex-shrink: 0; /* Prevent items from shrinking */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

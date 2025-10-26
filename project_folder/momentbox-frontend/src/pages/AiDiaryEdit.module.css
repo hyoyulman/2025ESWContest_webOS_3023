@@ -1,0 +1,577 @@
+/* ===== 리셋 ===== */
+html, body { height: 100%; margin: 0; }
+body { overflow: hidden; }
+
+/* ===== 전역 변수 ===== */
+:root {
+  --appbar-h: 64px;
+
+  /* 전체 배경(책상) */
+  --page-bg: #f8f1e6;
+
+  /* 디스플레이(아이패드 화면) */
+  --screen-border: #000;          /* 화면 경계선: 블랙 */
+  --screen-bg-1:  #ffffff;        /* 위쪽 밝은 톤 */
+  --screen-bg-2:  #f5f5f7;        /* 아래쪽 은은한 톤 */
+  --screen-tint:  rgba(0,0,0,0.02); /* 질감 강도 (0으로 끄기 가능) */
+
+  /* 외곽/베젤 색 */
+  --rim-color:   #000000;         /* 바깥 테두리(외곽 림): 블랙 */
+  --bezel-color: #cfd2d6;         /* 베젤: 아이폰 그레이(실버) */
+
+  /* 홈버튼 */
+  --home-outer: #d9dbe0;          /* 버튼 바탕(실버 톤) */
+  --home-ring:  #000;             /* 버튼 링 */
+}
+
+/* ===== 레이아웃 변수 ===== */
+.wrap {
+  /* 소품 크기 */
+  --book2-w: clamp(380px, 36vw, 560px);
+  --book1-w: clamp(420px, 38vw, 640px);
+  --ink-w:   clamp(160px, 16vw, 240px);
+
+  --ipad-w: clamp(960px, 78vw, 1380px);   /* 가로는 그대로 */
+  --ipad-h: clamp(720px, 78vh, 1080px);   /* 세로만 ↑ */
+  --radius: 30px;
+
+  /* ✅ 블랙 외곽 + 그레이 베젤의 2중 테두리 */
+  --rim: 5px;     /* 바깥 블랙 테두리 두께 */
+  --bezel: 34px;   /* 안쪽 그레이 베젤 두께 */
+
+  position: relative;
+  width: 100vw; height: 100vh;
+  background: var(--page-bg);
+  overflow: hidden;
+}
+
+.scene { position: absolute; inset: 0; overflow: hidden; }
+
+/* 공통 오브젝트 */
+.obj {
+  position: absolute; display: block; user-select: none; pointer-events: none;
+  z-index: 1; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.12));
+}
+
+/* 배치 */
+.book2 { width: var(--book2-w); left: -8%; top: -7%; transform: rotate(10deg); z-index: 3; }
+.book1 { width: var(--book1-w); left: -5%; bottom: -20%; transform: rotate(-5deg); z-index: 2; }
+.ink   { width: var(--ink-w);   right: 3%; bottom: 7%; transform: rotate(-4deg); z-index: 2; }
+
+/* 우측 상단 펜 */
+.pen {
+  position: fixed;
+  width: clamp(260px, 22vw, 420px);
+  right: 12px;
+  top: calc(var(--appbar-h) + 8px);
+  transform: rotate(82deg);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ===== 아이패드 탑뷰 ===== */
+.ipad {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) rotate(0.4deg);
+  width: var(--ipad-w); height: var(--ipad-h);
+  z-index: 10;
+}
+
+/* 바깥 블랙 테두리(rim) */
+.frame {
+  position: relative;
+  width: 100%; height: 100%;
+  border-radius: calc(var(--radius) + var(--rim));
+  background: var(--rim-color);         /* 블랙 외곽 */
+  padding: var(--rim);
+  box-shadow: 0 20px 38px rgba(0,0,0,0.16); /* 바닥 그림자 */
+}
+
+/* 안쪽 그레이 베젤 */
+.frame::before {
+  content: "";
+  position: absolute; inset: var(--rim);
+  border-radius: var(--radius);
+  background: var(--bezel-color);       /* 아이폰 그레이 */
+}
+
+/* 카메라 렌즈 */
+.lens {
+  position: absolute;
+  top: calc(var(--rim) + max(10px, var(--bezel) * 0.35));
+  left: 50%;
+  width: 10px; height: 10px; transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2a5cff 10%, #0a0a0a 40%, #000 70%);
+  box-shadow: 0 0 2px rgba(0,0,0,0.6), inset 0 0 1px rgba(255,255,255,0.35);
+  z-index: 2;
+}
+
+/* 홈버튼(가로 모드 오른쪽 베젤 중앙) */
+.homeBtn {
+  position: absolute;
+  right: calc(var(--rim) + (var(--bezel) / 2) - 14px);
+  top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--home-outer);
+  border: 2px solid var(--home-ring);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.08) inset,
+    0 1px 0 rgba(255,255,255,0.4) inset;
+  z-index: 3; pointer-events: none;
+}
+.homeInner {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--home-ring);
+  background: transparent;
+}
+
+/* 디스플레이(화면) */
+.screen {
+  position: absolute;
+  inset: calc(var(--rim) + var(--bezel));                /* 외곽+베젤 두께 반영 */
+  border: 2px solid var(--screen-border);               /* 화면 라인: 블랙 */
+  border-radius: calc(var(--radius) - var(--bezel) + var(--rim) - 2px);
+  overflow: hidden;
+  background:
+    linear-gradient(to bottom, var(--screen-bg-1) 0%, var(--screen-bg-2) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 34px, var(--screen-tint) 35px);
+}
+
+/* 유리 반사 */
+.screen::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), transparent 28%);
+  pointer-events:none;
+}
+
+.screen {
+  /* ... existing styles ... */
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+}
+
+.diaryDisplayContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.diaryHeader {
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 2.8rem;
+  font-weight: normal; /* Handwriting fonts often look better without bold */
+  color: #212529;
+  margin: 0 0 10px;
+}
+
+.date {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 1.8rem; /* Further increased font size */
+  color: #868e96;
+  font-weight: 500;
+  margin-bottom: 15px; /* Add margin to separate from categories */
+}
+
+.diaryBody {
+  flex-grow: 1;
+  display: flex;
+  gap: 25px;
+  overflow: hidden;
+}
+
+.textColumn {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-left: 15px; /* Change to left padding */
+}
+
+.mediaColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reader {
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 1.8rem; /* Further increased font size */
+  line-height: 2.4; /* Adjusted line height */
+  color: #343a40;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  flex-grow: 1;
+}
+
+.photoGallery {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mainPhoto {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+.mainPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 8px;
+}
+
+.thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.thumbnail.active {
+  border-color: #007bff;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.categoryTags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.categoryTag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  border: 2px solid transparent; /* Prevent layout shift on active */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.categoryTag:not(.active):hover {
+  transform: translateY(-2px);
+}
+
+.categoryTag.active {
+  font-weight: 700;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
+}
+
+.categoryTag.운동 { background-color: #cceeff; color: #00678a; }
+.categoryTag.공부 { background-color: #d9f7d9; color: #0b6b0b; }
+.categoryTag.여행 { background-color: #ffe6cc; color: #8a4d00; }
+.categoryTag.피곤 { background-color: #ffd9d9; color: #8a0000; }
+.categoryTag.행복 { background-color: #e6ccff; color: #5d008a; }
+
+
+.reader::-webkit-scrollbar { width: 8px; }
+.reader::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 4px; }
+.reader::-webkit-scrollbar-track { background: transparent; }
+
+/* 작은 화면 보정 */
+@media (max-width: 740px) {
+  .wrap { --ipad-w: 88vw; --ipad-h: 60vh; --rim: 12px; --bezel: 28px; }
+  .diaryBody { flex-direction: column; }
+}
+
+.diaryPhotoGrid {
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄로 표시 */
+  gap: 10px;
+  margin-bottom: 1rem;
+  justify-content: center;
+  max-height: 150px; /* 적절한 높이 제한 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* 스크롤바 숨김 */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.diaryPhotoGrid::-webkit-scrollbar {
+  display: none;
+}
+
+.photoThumb,
+.diaryPhotoThumb {
+  width: 80px; /* Adjust as needed */
+  height: 80px; /* Adjust as needed */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.photoThumb img,
+.diaryPhotoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoThumb.active,
+.diaryPhotoThumb.active {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+
+.diaryPhotoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* ===== 편집 버튼(추가) ===== */
+.editButton {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 5; /* 다른 요소 위로 */
+
+  /* 아이콘 버튼 스타일 */
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* 아이콘 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.editContainer {
+  display: flex;
+  gap: 25px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.editColumnLeft {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.editColumnRight {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #f8f9fa; /* Add background for separation */
+  border-radius: 8px;
+}
+
+.editButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.actionsContainer {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 20; /* Ensure it's above other content */
+  display: flex;
+  flex-direction: row; /* Explicitly set direction */
+  gap: 10px;
+}
+
+.titleInput {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #e9ecef;
+  border-radius: 0;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  font-size: 2.2rem;
+  font-weight: bold;
+  font-family: 'Nanum Pen Script', cursive;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.titleInput:focus {
+  outline: none;
+  border-bottom-color: #007bff;
+}
+
+.contentWrapper {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentInput {
+  flex-grow: 1;
+  resize: none; /* Disable textarea resizing */
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 1.8rem;
+  line-height: 2.4;
+  border: 1px solid #f1f3f5;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fdfdfd;
+}
+
+.emojiToggleButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.emojiToggleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.emojiPicker {
+  position: absolute;
+  bottom: 60px; /* Position above the action buttons */
+  right: 0;
+  width: 280px;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  z-index: 100; /* Increased z-index */
+}
+
+.emoji {
+  cursor: pointer;
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.emoji:hover {
+  background-color: #f1f3f5;
+}
+
+.photoManagementSection {
+  padding: 15px;
+  background-color: #f1f3f5;
+  border-radius: 12px;
+}
+
+.photoManagementSection h3, .photoManagementSection h4 {
+  margin-bottom: 10px;
+  color: #343a40;
+}
+
+.photoManagementSection h3 {
+  font-size: 1.3rem;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.photoManagementSection h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+  max-height: 200px; /* 적절한 높이 제한 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* 스크롤바 숨김 */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.photoGrid::-webkit-scrollbar {
+  display: none;
+}
+
+.photoThumb:hover {
+  transform: scale(1.05);
+  border-color: rgba(0, 123, 255, 0.5);
+}
+
+.photoThumb.active {
+  border-color: #007bff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* 버튼 내부 SVG 아이콘 색상 */
+.editButton svg {
+  stroke: #333;
+}
+
+.editButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.editButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

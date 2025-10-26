@@ -1,0 +1,212 @@
+html, body, #root { margin: 0; padding: 0; }
+
+/* ==== 전역 컨테이너 (배경은 각 페이지가 담당) ==== */
+.shell{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background: transparent; /* 배경은 Main.css에서 처리 */
+}
+
+/* ==== 배너(로고/아이콘만, 비고정) ==== */
+.appbar{
+  position: fixed;            /* ← 기존 relative 를 fixed 로 */
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  padding: 0 12px;
+
+  background: transparent;    /* ← 항상 투명 */
+  border: 0;
+}
+
+/* 중앙 로고 momentbox*/
+.appbar__brand{
+  grid-column:2;
+  justify-self:center;
+  margin:0;
+  display:flex;               /* flex 컨테이너 */
+  align-items:center;         /* 수직 중앙 정렬 */
+  font-weight:800;
+  letter-spacing:.2px;
+  font-size:clamp(20px,2.2vw,28px);
+  line-height:1;              /* 폰트 자체 여백 최소화 */
+}
+
+/* === (변경) 브랜드 텍스트 스타일 개선 === */
+.appbar__brand a{
+  text-decoration: none;
+  display: inline-block;
+
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, 
+               "Apple SD Gothic Neo", "Noto Sans KR", "Helvetica Neue", Arial;
+  font-weight: 900;
+  /* 외곽선 효과 (브라우저 지원: WebKit 기반 크롬/사파리) */
+  -webkit-text-stroke: 0.5px #000;
+
+  /* 입체감 주는 그림자 */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+
+  transition: transform .18s ease, letter-spacing .18s ease;
+
+  /* 단색 검정 로고 */
+  color: #000;
+  letter-spacing: 0.4px;
+
+  /* 살짝 입체감 주고 싶다면 */
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.15));
+  transition: transform .18s ease, letter-spacing .18s ease;
+}
+.appbar__brand a:hover{
+  transform: translateY(-1px);
+  letter-spacing: .3px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+}
+
+/* 좌 햄버거(박스 제거) */
+.appbar__hamburger{
+  grid-column:1; justify-self:start;
+  width:40px; height:32px;
+  background: transparent; border: none; box-shadow: none;
+  display:grid; place-content:center; gap:4px; cursor:pointer;
+}
+.appbar__hamburger span{ display:block; width:18px; height:2px; background:#2b2b2b; }
+/* 접근성: 키보드 포커스 표시 */
+.appbar__hamburger:focus-visible{ outline:2px solid rgba(0,0,0,0.25); outline-offset:3px; }
+
+/* 우측 버튼 */
+.appbar__right {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  margin-right: 12px;   /* ← 원하는 값으로 조절 (8~16px 추천) */
+}
+.btn-ghost{
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-family: 'Noto Sans KR', system-ui, sans-serif; /* MomentBox와 동일 */
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  line-height: 1;
+}
+.btn-ghost:focus-visible{ outline:2px solid rgba(0,0,0,0.25); outline-offset:3px; }
+
+.app__content{ padding:0; }   
+
+/* 반응형 */
+@media (max-width:640px){
+  .appbar{ grid-template-columns:56px 1fr 56px; }
+  .appbar__brand{ font-size: clamp(18px,5vw,22px); }
+}
+
+/* 다크모드 최소 대응 */
+@media (prefers-color-scheme: dark){
+  /* 그라디언트 텍스트는 그대로 두고, 햄버거/버튼만 색상 보정 */
+  .appbar__hamburger span{ background:#eaeaea; }
+  .btn-ghost{ color:#eaeaea; }
+}
+
+/* === 오버레이 === */
+.side-dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+  z-index: 90;
+}
+.side-dim.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* === 사이드바 === */
+.side-menu {
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  width: min(76vw, 420px);
+  background: #f2e9d8;
+  z-index: 100;
+
+  transform: translateX(-105%);
+  transition: transform .26s ease;
+
+  padding: 18px 22px 20px;
+  box-shadow: 0 14px 36px rgba(0,0,0,.18);
+}
+.side-menu.open {
+  transform: translateX(0);
+}
+
+/* 닫기 버튼 */
+.side-close {
+  position: absolute;
+  top: 14px; right: 16px;
+  font-size: 28px;
+  line-height: 1;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: #222;
+}
+
+/* 메뉴 링크 */
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 54px;
+
+  /* === (추가) 전체 가운데 정렬 === */
+  align-items: center;           /* 내부 아이템 수평 중앙 정렬 */
+  text-align: center;            /* 텍스트 중앙 정렬 */
+}
+.side-nav a {
+  text-decoration: none;
+  color: #2b2b2b;
+  font-size: 22px;
+
+  /* === (추가) 링크 자체도 블록화 + 가운데 정렬 안정화 === */
+  display: block;
+  width: 100%;
+}
+
+/* === (추가) NavLink 클래스 대응: 활성 상태 표시 === */
+/* AppLayout.jsx에서 className이 "nav__item" 또는 "nav__item is-active" 형태로 들어오므로 같이 스타일링 */
+.side-nav .nav__item{
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background .16s ease, transform .16s ease;
+}
+.side-nav .nav__item:hover{
+  background: rgba(0,0,0,.06);
+  transform: translateY(-1px);
+}
+.side-nav .nav__item.is-active{
+  background: rgba(0,0,0,.12);
+  font-weight: 800;
+}
+
+/* 구분선 */
+.side-divider {
+  height: 1px;
+  width: 80%; /* 너비 설정 */
+  background: rgba(0,0,0,.1);
+  margin: 0; /* 상하 마진 제거하여 gap으로만 간격 조절 */
+}
+
+/* 하단 브랜드 */
+.side-brand {
+  position: absolute;
+  left: 22px;
+  bottom: 16px;
+  color: #2b2b2b;
+  font-size: 16px;
+}

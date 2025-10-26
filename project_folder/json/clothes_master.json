@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "cook_c_01",
+    "name": "조리복",
+    "category": "top",
+    "price": 10000,
+    "image_url": "/assets/store/cook_c.png"
+  },
+  {
+    "_id": "indian_c_01",
+    "name": "인디언 모자",
+    "category": "headwear",
+    "price": 20000,
+    "image_url": "/assets/store/indian_c.png"
+  },
+  {
+    "_id": "soldier_c_01",
+    "name": "군복",
+    "category": "full_body",
+    "price": 30000,
+    "image_url": "/assets/store/soldier_c.png"
+  },
+  {
+    "_id": "suit_c_01",
+    "name": "수트",
+    "category": "full_body",
+    "price": 40000,
+    "image_url": "/assets/store/suit_c.png"
+  },
+  {
+    "_id": "uni_c_01",
+    "name": "과잠",
+    "category": "outer",
+    "price": 50000,
+    "image_url": "/assets/store/uni_c.png"
+  }
+]

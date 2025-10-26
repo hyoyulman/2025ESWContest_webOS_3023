@@ -1,0 +1,400 @@
+:root {
+  /* === 커스터마이즈 가능한 변수들 === */
+  --horizon: 68vh;         /* 경계선 높이 (vh) */
+  --line-thick: 7px;       /* 경계선 굵기 (background-size 높이) */
+  --line-offset: -5px;     /* 경계선 위치 미세 조정 (px), -숫자 커질 수록 위로 올라감 */
+  --line-color: #2b2b2b;   /* 선 색상 */
+
+  /* ===== 울퉁불퉁 효과 ===== */
+  --rough-freq: 50;        /* 물결 주기 */
+  --rough-oct: 5;          /* 옥타브 */
+  --rough-scale: 100;      /* 강도 */
+
+  /* 배경 색상 */
+  --wall: #f8f1e6;         /* 아이보리 벽 */
+  --floor: #a9c6e3;        /* 연파랑 바닥 */
+
+  /* 공룡 크기/보정 (기본값: equipped 없을 때 fallback) */
+  --dino-left-size:  clamp(200px, 26vw, 380px);
+  --dino-right-size: clamp(240px, 28vw, 420px);
+  --dino-left-y:  20px;
+  --dino-right-y: 25px;
+  --dino-left-scale:  0.85;
+  --dino-right-scale: 2.1;
+
+  /* === 소품(책장/달력) 위치·크기 변수 === */
+  --shelf-left:    clamp(10%, 16vw, 22%);
+  --calendar-left: clamp(22%, 24vw, 32%);
+  --shelf-bottom:  -8px;                                /* + 위 / - 아래 */
+  --calendar-rise: clamp(120px, 22vh, 400px);         /* + 위 */
+  --shelf-width:    clamp(140px, 16vw, 280px);
+  --calendar-width: clamp(56px, 6vw, 96px);
+
+  /* === 추가 소품(액자/게임기) 위치·크기 변수 === */
+  --frame-right: clamp(13%, 2vw, 4%);
+  --frame-rise:  clamp(260px, 24vh, 360px);
+  --frame-width: clamp(70px, 8vw, 120px);
+
+  --game-left: clamp(35%, 6vw, 10%);
+  --game-bottom: -130px;
+  --game-width: clamp(60px, 8vw, 110px);
+
+  --desk-left: clamp(54%, 40vw, 55%);
+  --desk-bottom: -50px;
+  --desk-width: clamp(200px, 20vw, 340px);
+
+  --diary-left:  clamp(60%, 64vw, 72%);   /* 책상 위쪽으로 옮김 */
+  --diary-bottom: 195px;                  /* 책상 위로 올리기 (값 ↑ = 더 위) */
+  --diary-width: clamp(70px, 7vw, 120px);
+}
+
+/* ===== 전역 리셋 ===== */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  overflow-x: hidden; background: transparent;
+}
+
+/* ===== 메인 컨테이너 ===== */
+.home {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  padding-top: 64px;
+  overflow: hidden;
+  background: transparent;
+  z-index: 0;
+}
+
+/* ===== 배경 + 손그림 경계선 ===== */
+.home::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1; pointer-events: none;
+
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-200 0 1400 120' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='rough' x='-600' y='-400' width='2600' height='1000' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='4' seed='29' result='noise'/%3E%3CfeGaussianBlur in='SourceGraphic' stdDeviation='0.4' result='soft'/%3E%3CfeDisplacementMap in='soft' in2='noise' scale='90' xChannelSelector='R' yChannelSelector='G' result='dist'/%3E%3CfeMorphology in='dist' operator='erode' radius='0.6' result='out'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M-300,60 C150,58 300,62 450,58 600,62 850,58 1300,60' stroke='%232b2b2b' stroke-width='80' stroke-linecap='round' fill='none' filter='url(%23rough)'/%3E%3C/svg%3E")
+      no-repeat
+      center calc(var(--horizon) + var(--line-offset)) /
+      calc(100% + 48px) var(--line-thick),
+    linear-gradient(
+      to bottom,
+      var(--wall) 0 var(--horizon),
+      var(--floor) var(--horizon) 100%
+    );
+}
+
+/* ===== 공룡 이미지 ===== */
+.dino-img {
+  position: absolute;
+  width: var(--dino-size);
+  transform: translateY(var(--dino-y));
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity .18s ease;
+  will-change: opacity;
+  z-index: 2;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,.2));
+}
+
+/* 여기서 !important 제거해서 inline style(React) 우선 적용되게 함 */
+.dino-left  {
+  width: var(--dino-left-size);
+  transform: translateY(var(--dino-left-y)) scale(var(--dino-left-scale));
+}
+.dino-right {
+  width: var(--dino-right-size);
+  transform: translateY(var(--dino-right-y)) scale(var(--dino-right-scale));
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 560px) {
+  :root { --horizon: 64vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dino-img { transition: opacity .01s linear !important; }
+}
+@media (max-width: 560px) {
+  .dino-img { transform: translateY(calc(var(--dino-y) + 4px)); }
+}
+
+/* ===== 불필요 요소 제거 ===== */
+.scene-panel,
+.scene-screen-button,
+.prop,
+.list-section {
+  display: none !important;
+}
+
+/* ===== 중복선 방지 및 기본 레이아웃 유지 ===== */
+.scene-svg-wrap::before { content: none !important; }
+.scene-svg-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  transform-origin: center; z-index: 1;
+}
+.scene-svg-wrap[data-align="left"]  .scene-svg-inner { justify-content: flex-start; }
+.scene-svg-wrap[data-align="center"] .scene-svg-inner { justify-content: center; }
+.scene-svg-wrap[data-align="right"]  .scene-svg-inner { justify-content: flex-end; }
+
+/* ============================== */
+/*        ⬇ 소품 (책장/달력)     */
+/* ============================== */
+.decor{
+  position: absolute;
+  user-select: none;
+  -webkit-user-drag: none;
+  image-rendering: -webkit-optimize-contrast;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.08));
+  z-index: 2;
+  transition: transform 0.2s ease-in-out;
+}
+
+.decor-shelf{
+  left: var(--shelf-left);
+  bottom: calc(100vh - var(--horizon) + var(--shelf-bottom));
+  width: var(--shelf-width);
+}
+
+.decor-calendar{
+  left: var(--calendar-left);
+  bottom: calc(100vh - var(--horizon) + var(--calendar-rise));
+  width: var(--calendar-width);
+  z-index: 3;
+}
+
+/* ============================== */
+/*     ⬇ 추가 소품 (액자/게임기)  */
+/* ============================== */
+.decor-frame{
+  right: var(--frame-right);
+  bottom: calc(100vh - var(--horizon) + var(--frame-rise));
+  width: var(--frame-width);
+  z-index: 3;
+}
+
+.decor-game{
+  left: var(--game-left);
+  bottom: calc(100vh - var(--horizon) + var(--game-bottom));
+  width: var(--game-width);
+  z-index: 2;
+}
+
+/* ============================== */
+/*     ⬇ 새 소품 (책상/일기)     */
+/* ============================== */
+.decor-desk{
+  left: var(--desk-left);
+  bottom: calc(100vh - var(--horizon) + var(--desk-bottom));
+  width: var(--desk-width);
+  z-index: 2;
+}
+.decor-diary{
+  left: var(--diary-left);
+  bottom: calc(100vh - var(--horizon) + var(--diary-bottom));
+  width: var(--diary-width);
+  z-index: 3;
+}
+
+/* --- Camera Upload Button with Tooltip --- */
+.camera-container {
+  position: fixed;
+  bottom: 475px;
+  right: 650px;
+  z-index: 1000;
+}
+
+.camera-upload-button {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.camera-upload-button:hover {
+  transform: translateY(-3px);
+}
+
+.camera-upload-button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.camera-container .tooltip {
+  visibility: hidden;
+  width: auto;
+  min-width: 100px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  border-radius: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  z-index: 1;
+  bottom: 120%;
+  left: 90%;
+  transform: rotate(2deg);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.2s;
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 22px;
+  border: 2px solid black;
+  white-space: nowrap;
+}
+
+.camera-container:hover .tooltip {
+    transform: rotate(0deg);
+}
+
+.camera-container .tooltip::after { /*카메라 말풍선*/
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 15%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid black;
+}
+
+.camera-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* --- 확인 모달 --- */
+.confirm-modal, .upload-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 90%;
+  width: 400px;
+}
+
+.modal-content p {
+  font-size: 18px;
+  margin-bottom: 25px;
+  word-break: break-all;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modal-buttons button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-buttons button:first-child {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.modal-buttons button:first-child:hover {
+  background-color: #357abd;
+}
+
+.modal-buttons button:last-child {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.modal-buttons button:last-child:hover {
+  background-color: #e0e0e0;
+}
+
+/* --- 업로드 중 인디케이터 --- */
+.upload-indicator p {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  background: rgba(0,0,0,0.7);
+  padding: 20px 40px;
+  border-radius: 10px;
+}
+
+/* --- Tooltip for decor items --- */
+.tooltip-container .tooltip {
+  visibility: hidden;
+  width: auto;
+  min-width: 100px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  border-radius: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  z-index: 1;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.2s;
+  font-family: 'Nanum Pen Script', cursive;
+  font-size: 22px;
+  border: 2px solid black;
+  white-space: nowrap;
+}
+
+.tooltip-container:hover .tooltip {
+  transform: translateX(-50%) rotate(0deg);
+}
+
+.tooltip-container .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid black;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-container:hover {
+  transform: translateY(-4px);
+}
+
+/* --- Diary Tooltip Position --- */
+.decor-diary.tooltip-container .tooltip {
+  bottom: 90%;
+  right: 90%;
+  left: auto;
+  transform: none;
+}
+
+.decor-diary.tooltip-container .tooltip::after {
+  left: 85%;
+}

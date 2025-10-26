@@ -1,0 +1,108 @@
+/* 전체 페이지 */
+.login-page {
+  min-height: 100vh;
+  width: 100%;        /* ✅ 가로 전체 */
+  height: 100%;       /* ✅ 세로 전체 */
+  display: grid;
+  place-items: center;
+  background: #f6f7fb;
+  /* padding: 24px; */ /* 🔴 삭제 */
+  box-sizing: border-box;
+}
+/* 카드 */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 28px 24px;
+  box-sizing: border-box;
+}
+
+/* 제목 */
+.title {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  text-align: center;
+}
+
+/* 에러 알림 */
+.alert {
+  background: #ffecee;
+  color: #b00020;
+  border: 1px solid #ffd0d6;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* 폼 */
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.form-row {
+  display: grid;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 13px;
+  color: #444;
+}
+
+.form-row input {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #d8dbe2;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  background: #fff;
+}
+
+.form-row input:focus {
+  border-color: #6b8cff;
+}
+
+/* 버튼 */
+.submit-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: #6b8cff;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 하단 힌트 */
+.hint {
+  margin-top: 14px;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+}
+
+.hint a {
+  color: #6b8cff;
+  text-decoration: none;
+}
+
+.hint a:hover {
+  text-decoration: underline;
+}
