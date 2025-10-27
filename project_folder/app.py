@@ -37,10 +37,6 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    # Import and initialize master devices
-    from features.lg_appliance.lg_appliance_service import initialize_master_devices_db
-    initialize_master_devices_db()
-
     # --- JWT User Loader ---
     @jwt.user_lookup_loader
     def user_lookup_loader(_jwt_header, jwt_data):

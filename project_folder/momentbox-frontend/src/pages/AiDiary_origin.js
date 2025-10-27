@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import styles from "./AiDiary.module.css";
 import axios from "../api/axiosInstance";
 
-// (import ... monitor, lamp 등 ... 은 변경 없음)
 import monitor from "../assets/monitor.png";
 import lamp from "../assets/lamp.png";
 import keyboard from "../assets/keyboard.png";
@@ -21,7 +20,7 @@ export default function AiDiary() {
   const [photos, setPhotos] = useState([]);
   const [selectedPhotos, setSelectedPhotos] = useState([]);
   const [isStartingPhotoSession, setIsStartingPhotoSession] = useState(false);
-  const [sessionLoadingProgress, setSessionLoadingProgress] = useState(0); 
+  const [sessionLoadingProgress, setSessionLoadingProgress] = useState(0); // New state for session loading progress
   const sessionProgressIntervalRef = useRef(null);
 
   // --- 사진 업로드 관련 상태 및 핸들러 ---
@@ -37,8 +36,8 @@ export default function AiDiary() {
     );
   };
 
-  // --- [ 1. selectedSpeaker 기본값 "default"로 변경 ] ---
-  const [selectedSpeaker, setSelectedSpeaker] = useState("default"); 
+  // 🔼 state 선언 추가
+  const [selectedSpeaker, setSelectedSpeaker] = useState("sy"); // 화자 기본값 'sy'
 
   useEffect(() => {
     if (isStartingPhotoSession) {
@@ -58,13 +57,13 @@ export default function AiDiary() {
   }, [isStartingPhotoSession]);
 
 
-  // handleCreateDiary는 speaker: selectedSpeaker를 전송하므로 수정 필요 없음
-  // (selectedSpeaker의 값 자체가 'default', 'soyeon', 'yejin'으로 바뀔 것이기 때문)
+
+  // 🔽 일기 생성 API 호출에 speaker 추가
   const handleCreateDiary = async () => {
     try {
       const res = await axios.post("/api/ai_coach/create_diary", {
         categories: selectedTags,
-        speaker: selectedSpeaker // 'default', 'soyeon', 'yejin' 중 하나가 전송됨
+        speaker: selectedSpeaker // 🟡 추가
       });
       if (res.data.status === "success") {
         setDiaryId(res.data.diary_id);
@@ -75,7 +74,6 @@ export default function AiDiary() {
     }
   };
 
-  // (handleStartPhotoSession, useEffect, fetchPhotos, togglePhoto 등... 변경 없음)
   const handleStartPhotoSession = async () => {
     setIsStartingPhotoSession(true);
     setTimeout(async () => {
@@ -155,7 +153,7 @@ export default function AiDiary() {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
-    formData.append('description', '새로운 사진'); 
+    formData.append('description', '새로운 사진'); // 필요시 설명 추가
 
     setUploading(true);
     setShowConfirm(false);
@@ -175,6 +173,7 @@ export default function AiDiary() {
     } finally {
       setUploading(false);
       setSelectedFile(null);
+      // 파일 인풋 초기화
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -191,7 +190,7 @@ export default function AiDiary() {
 
   return (
     <div className={styles.wrap}>
-      {/* (업로드 관련 UI... input, confirmModal 등 ... 변경 없음) */}
+      {/* --- 업로드 관련 UI --- */}
       <input
         type="file"
         ref={fileInputRef}
@@ -217,8 +216,8 @@ export default function AiDiary() {
           <p>업로드 중...</p>
         </div>
       )}
+      {/* --- 업로드 UI 끝 --- */}
 
-      {/* (scene, obj ... monitor, lamp 등 ... 변경 없음) */}
       <div className={styles.scene}>
         <img className={`${styles.obj} ${styles.memo}`} src={memo} alt="메모" />
         <img className={`${styles.obj} ${styles.monitor}`} src={monitor} alt="모니터" />
@@ -229,6 +228,7 @@ export default function AiDiary() {
         <img className={`${styles.obj} ${styles.tablet}`} src={tablet} alt="타블렛" />
 
         <div className={styles.screen}>
+
 
           {step === "hashtag" && (
               <div className={styles.hashtagContainer}>
@@ -247,27 +247,19 @@ export default function AiDiary() {
                   ))}
                 </div>
 
-                {/* --- [ 2. 화자 선택 UI 수정 ] --- */}
+                {/* 🔽 화자 선택 UI 변경 */}
                 <div className={styles.speakerContainer}>
                   <span className={styles.speakerLabel}>AI 목소리 선택</span>
                   <div className={styles.speakerButtonContainer}>
-                    {/* "기본 음성" 버튼 추가 */}
-                    <button 
-                      onClick={() => setSelectedSpeaker('default')}
-                      className={`${styles.speakerButton} ${selectedSpeaker === 'default' ? styles.selected : ''}`}>
-                      기본 음성
-                    </button>
-                    {/* "soyeon" 버튼: state 값을 'soyeon'으로 변경 */}
                     <button 
                       onClick={() => setSelectedSpeaker('sy')}
                       className={`${styles.speakerButton} ${selectedSpeaker === 'sy' ? styles.selected : ''}`}>
-                      sy (화자 1)
+                      soyeon (화자 1)
                     </button>
-                    {/* "yejin" 버튼: state 값을 'yejin'으로 변경 */}
                     <button 
                       onClick={() => setSelectedSpeaker('yj')}
                       className={`${styles.speakerButton} ${selectedSpeaker === 'yj' ? styles.selected : ''}`}>
-                      yj (화자 2)
+                      yejin (화자 2)
                     </button>
                   </div>
                 </div>
@@ -285,7 +277,6 @@ export default function AiDiary() {
             )}
 
           {step === "photo" && (
-            // (step === "photo" 부분은 변경 없음)
             <div className={styles.screenContent}>
               <div className={styles.titleContainer}>
                 <h3 className={styles.screenTitle}>사진을 선택하세요</h3>

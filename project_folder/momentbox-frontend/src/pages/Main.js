@@ -14,6 +14,8 @@ import diary from '../assets/diary.png';
 import cameraPng from '../assets/camera.png';
 import dashboardPng from '../assets/dashboard.png';
 
+import CharacterBubble from './CharacterBubble';
+
 // 공룡 의상 매핑
 import { outfitMapping } from '../constants/outfitMapping';
 
@@ -31,6 +33,10 @@ export default function Main() {
   // 공룡 시선 상태
   const [lookRight, setLookRight] = useState(true);
   const rafRef = useRef(null);
+
+  // 퀘스트 추천 상태
+  const [recommendedQuest, setRecommendedQuest] = useState(null);
+  const [isBubbleVisible, setIsBubbleVisible] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -158,6 +164,32 @@ export default function Main() {
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state?.upload, navigate, location.pathname]);
+
+  // 4) 퀘스트 추천 로직
+  useEffect(() => {
+    const interval = setInterval(() => {
+      axiosInstance.get('/api/quests/weekly')
+        .then(response => {
+          if (response.data && Array.isArray(response.data)) {
+            const inProgressQuests = response.data.filter(
+              (q) => q.user_progress?.status === 'in_progress'
+            );
+            if (inProgressQuests.length > 0) {
+              const randomQuest = inProgressQuests[Math.floor(Math.random() * inProgressQuests.length)];
+              setRecommendedQuest(randomQuest);
+              setIsBubbleVisible(true);
+            }
+          }
+        })
+        .catch(err => console.error("Failed to fetch quests for recommendation:", err));
+    }, 10000); // 10초마다 실행
+
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 제거
+  }, []); // 컴포넌트 마운트 시 한 번만 실행
+
+  const handleCloseBubble = () => {
+    setIsBubbleVisible(false);
+  };
 
   // ------------------------------------------------------------------
   // 현재 보여줄 공룡 이미지/스타일 결정
@@ -335,22 +367,32 @@ export default function Main() {
           </div>
 
           {/* 공룡 (시선 전환) */}
-          <img
-            src={currentLeftImg}
-            alt=""
-            className="dino-img dino-left"
-            style={leftStyle}
-            aria-hidden={lookRight}
-            draggable="false"
-          />
-          <img
-            src={currentRightImg}
-            alt=""
-            className="dino-img dino-right"
-            style={rightStyle}
-            aria-hidden={!lookRight}
-            draggable="false"
-          />
+          <div className="dino-container">
+            <img
+              src={currentLeftImg}
+              alt=""
+              className="dino-img dino-left"
+              style={leftStyle}
+              aria-hidden={lookRight}
+              draggable="false"
+            />
+            <img
+              src={currentRightImg}
+              alt=""
+              className="dino-img dino-right"
+              style={rightStyle}
+              aria-hidden={!lookRight}
+              draggable="false"
+            />
+            {isBubbleVisible && (
+            <div
+              className={`bubble-anchor ${lookRight ? 'look-right' : 'look-left'}`}
+              style={{ '--bx': '-200px', '--by': '-240px' }}   // ⬅ 좌표 한 줄로 끝
+            >
+                <CharacterBubble quest={recommendedQuest} onClose={handleCloseBubble} />
+              </div>
+            )}
+          </div>
         </div>
       </section>
 

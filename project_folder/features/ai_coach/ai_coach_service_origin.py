@@ -14,7 +14,7 @@ from bson.objectid import ObjectId
 from google.cloud import storage
 import google.auth
 from urllib.parse import unquote # unquote 함수 임포트
-import requests # ◀◀◀ 1. Colab 연동을 위해 requests 임포트
+
 
 # 내부 서비스 호출을 위해 import
 from features.lg_appliance import lg_appliance_service
@@ -136,16 +136,21 @@ def initialize_general_chat_session(user_id):
         "current_mode": "idle"
     }
     
+    # briefing_text = get_briefing_text() # 브리핑 기능 비활성화
+
     initial_history = [
         {"role": "user", "parts": [Config.SYSTEM_PROMPT]},
         {"role": "model", "parts": ["네, 일기 코치 역할을 시작합니다."]},
     ]
-    
+    # if briefing_text:
+    #     initial_history.append({"role": "model", "parts": [briefing_text]})
+
     session['current_mode'] = "general_chat"
     session['history'] = initial_history
     
     _save_user_session(user_id, session)
     
+    # 브리핑이 없으므로 항상 기본 메시지 반환
     return "일기 코치와의 대화를 시작합니다."
 
 def get_briefing_text():
@@ -168,13 +173,17 @@ def start_photo_session_logic(user_id, diary_id, photo_url_list):
     if not photo_url_list:
         raise ValueError("선택된 사진이 없습니다.")
 
+    # From the full URL, extract the filename for the 'filename' field.
+    # The filename is the last part of the URL path.
     photo_objects = [{'filename': url.split('/')[-1], 'url': url} for url in photo_url_list]
     
+    # diary에 사진 객체 배열 추가
     mongo.db.diaries.update_one(
         {"_id": ObjectId(diary_id)},
         {"$addToSet": {"photos": {"$each": photo_objects}}}
     )
 
+    # 세션 갱신 (session now uses full URLs)
     session = {
         "history": [],
         "selected_photos": photo_url_list, # Keep as full URLs
@@ -183,6 +192,7 @@ def start_photo_session_logic(user_id, diary_id, photo_url_list):
     }
     _save_user_session(user_id, session)
 
+    # 첫 사진 대화 시작
     return _process_photo_message_logic(user_id, diary_id)
 
 def _process_photo_message_logic(user_id, diary_id):
@@ -195,13 +205,14 @@ def _process_photo_message_logic(user_id, diary_id):
     gcs_url = session['selected_photos'][index]
     print(f"Processing photo URL: {gcs_url}")
 
-    # (이전 수정 사항 유지)
-    storage_client = storage.Client() 
+    # GCS에서 이미지 다운로드 승엽 수정
+    #storage_client = storage.Client.from_service_account_json(Config.SERVICE_ACCOUNT_FILE)
+    storage_client = storage.Client() # ◀◀◀ 이 코드로 수정
     bucket = storage_client.bucket(Config.GCS_BUCKET_NAME)
 
     blob_name_encoded = gcs_url.replace(f'https://storage.googleapis.com/{Config.GCS_BUCKET_NAME}/', '', 1)
-    blob_name_decoded = unquote(blob_name_encoded) 
-    blob = bucket.blob(blob_name_decoded) 
+    blob_name_decoded = unquote(blob_name_encoded) # 추출된 blob_name을 디코딩
+    blob = bucket.blob(blob_name_decoded) # 디코딩된 이름으로 blob 객체 생성
     print("Downloading from GCS...")
     try:
         image_bytes = blob.download_as_bytes()
@@ -209,7 +220,7 @@ def _process_photo_message_logic(user_id, diary_id):
         prompt = [Config.PHOTO_PROMPT, image]
         print("GCS download successful.")
     except google.api_core.exceptions.NotFound:
-        print(f"WARNING: File not found in GCS: {blob_name_decoded}") 
+        print(f"WARNING: File not found in GCS: {blob_name_decoded}") # 디코딩된 이름으로 로그 출력
         prompt = f"시스템 메시지: 사용자가 '{blob_name_decoded.split('/')[-1]}' 사진에 대해 대화를 시도했지만, 파일을 클라우드 저장소에서 찾을 수 없었습니다. 이 사진을 불러올 수 없다고 사용자에게 알리고, 다음 사진으로 넘어가자고 제안하세요."
         gcs_url = None
 
@@ -223,8 +234,10 @@ def _process_photo_message_logic(user_id, diary_id):
         ai_response = response.text.strip()
         print("Gemini API call successful.")
 
+        # ✅ 이제 photo_url 저장
         append_diary_conversation(diary_id, 'ai', ai_response, photo_filename=gcs_url)
 
+        # 세션 업데이트
         session['history'] = chat.history
         _save_user_session(user_id, session)
 
@@ -235,6 +248,7 @@ def _process_photo_message_logic(user_id, diary_id):
         }
     except google.api_core.exceptions.InternalServerError as e:
         print(f"!! Gemini API Internal Server Error: {e}")
+        # 사용자에게 보여줄 에러 메시지를 포함하여 반환
         error_message = "이 이미지는 현재 처리할 수 없습니다. 다음 사진으로 넘어가 주세요."
         append_diary_conversation(diary_id, 'ai', error_message, photo_filename=gcs_url)
         return {
@@ -266,6 +280,7 @@ def next_photo_logic(user_id, diary_id):
         response = chat.send_message("자, 이제 사진 이야기는 끝났어. 오늘 하루는 어땠어?")
         final_message = response.text.strip()
 
+        # 여기 변경!
         append_diary_conversation(diary_id, 'ai', final_message)
 
         session['history'] = chat.history
@@ -282,13 +297,16 @@ def process_user_input_logic(user_id, user_query, diary_id):
     if not user_query:
         raise ValueError("입력된 내용이 없습니다.")
 
+    # 유저 입력 저장
     append_diary_conversation(diary_id, 'user', user_query)
 
+    # Gemini 응답
     model = genai.GenerativeModel(Config.GEMINI_MODEL)
     chat = model.start_chat(history=session['history'])
     response = chat.send_message(user_query)
     ai_response = response.text.strip()
 
+    # AI 응답 저장
     append_diary_conversation(diary_id, 'ai', ai_response)
 
     session['history'] = chat.history
@@ -313,6 +331,7 @@ def generate_diary_logic(user_id, diary_id):
     diary_response = diary_model.generate_content(prompt)
     full_text = diary_response.text.strip()
 
+    # Parse title and diary
     title_match = re.search(r'\[제목\]\n(.*?)\n\[일기\]', full_text, re.DOTALL)
     if title_match:
         diary_title = title_match.group(1).strip()
@@ -328,91 +347,45 @@ def generate_diary_logic(user_id, diary_id):
 
     return {"title": diary_title, "summary_context": diary_text, "photos": photos}
 
-# ----------------- [ ◀◀◀ 3. TTS 로직 전면 수정 ] -----------------
 
-def _google_tts_logic(text):
-    """[Helper] 텍스트를 Google 기본 음성(MP3)으로 변환합니다."""
-    print("[TTS LOGIC] Using Google Default TTS (MP3)")
-    try:
-        client = texttospeech.TextToSpeechClient() 
-        synthesis_input = texttospeech.SynthesisInput(text=text)
-        voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name="ko-KR-Standard-A")
-        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
-        response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
-        
-        # (오디오 데이터, 마임타입) 튜플 반환
-        return response.audio_content, 'audio/mpeg'
-    except Exception as e:
-        print(f"!!! Google TTS Error: {e}")
-        raise e # 오류를 상위로 다시 보냄
+def text_to_speech_logic(text): #승엽 수정
+    """텍스트를 음성 데이터(MP3)로 변환합니다."""
+    #credentials, project_id = google.auth.load_credentials_from_file(Config.SERVICE_ACCOUNT_FILE)
+    #client = texttospeech.TextToSpeechClient(credentials=credentials)
+    client = texttospeech.TextToSpeechClient() # ◀◀◀ 이 코드로 수정
+    synthesis_input = texttospeech.SynthesisInput(text=text)
+    voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name="ko-KR-Standard-A")
+    audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+    response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
+    return response.audio_content
 
-def _colab_tts_logic(text, speaker):
-    """[Helper] 텍스트를 Colab XTTS 서버(WAV)로 보냅니다."""
-    print(f"[TTS LOGIC] Attempting Colab TTS (WAV) for speaker: {speaker}")
-    
-    # config.py에 COLAB_TTS_URL이 정의되어 있어야 합니다.
-    if not hasattr(Config, 'COLAB_TTS_URL') or not Config.COLAB_TTS_URL:
-        raise ValueError("COLAB_TTS_URL이 config.py에 설정되지 않았습니다.")
+######################### 여기에 따라 tts 음성 변환 ##############################################
+''' def text_to_speech_logic(text, diary_id):
+    """텍스트를 Colab XTTS 서버로 보내고 WAV 오디오를 응답받음."""
+    # 🔍 diary에서 speaker 정보 불러오기
+    diary = mongo.db.diaries.find_one({"_id": ObjectId(diary_id)}, {"speaker": 1})
+    speaker = diary.get("speaker", "sy") if diary else "sy"
 
     payload = {
         "text": text,
-        "speaker": speaker  # "soyeon" 또는 "yejin"이 전달됨
+        "speaker": speaker
     }
-    
-    # Colab 서버는 느릴 수 있으므로 timeout을 넉넉하게 60초로 설정
-    response = requests.post(
-        Config.COLAB_TTS_URL,
-        json=payload,
-        timeout=60  
-    )
 
-    if response.status_code == 200:
-        print(f"[TTS LOGIC] Colab TTS for {speaker} successful.")
-        # (오디오 데이터, 마임타입) 튜플 반환
-        return response.content, 'audio/wav' 
-    else:
-        err_msg = "Unknown error"
-        try:
-            err_msg = response.json().get("error", "Colab TTS 서버에서 알 수 없는 오류 발생")
-        except requests.exceptions.JSONDecodeError:
-            err_msg = response.text # JSON이 아닌 응답
-        raise Exception(f"Colab TTS 서버 응답 오류 (Code {response.status_code}): {err_msg}")
-
-
-def text_to_speech_logic(text, diary_id):
-    """
-    diary_id를 조회하여 설정된 스피커에 따라 TTS를 분기합니다.
-    Colab 실패 시 Google 기본 음성으로 자동 대체(fallback)합니다.
-    """
     try:
-        # 1. diary_id로 speaker 설정 조회 (없으면 'default')
-        diary = mongo.db.diaries.find_one({"_id": ObjectId(diary_id)}, {"speaker": 1})
-        speaker = diary.get("speaker", "default") if diary else "default"
+        response = requests.post(
+            Config.COLAB_TTS_URL,  # 예: "https://abc123.ngrok.io/tts"
+            json=payload,
+            timeout=60  # 느릴 수 있으니 넉넉하게
+        )
 
-        # 2. 'default'이거나 'speaker' 필드가 없으면 Google TTS 호출
-        if speaker == "default":
-            return _google_tts_logic(text)
-        
-        # 3. 'default'가 아니면 (예: "soyeon", "yejin") Colab TTS 시도
+        if response.status_code == 200:
+            return response.content  # WAV 바이트 그대로 반환
         else:
-            try:
-                # 3-1. Colab 시도
-                return _colab_tts_logic(text, speaker)
-            except Exception as colab_error:
-                # 3-2. Colab 실패! (중요: fallback)
-                print(f"--- [TTS FALLBACK] ---")
-                print(f"Colab TTS 호출 실패 (speaker: {speaker}). Google 기본 음성으로 대체합니다.")
-                print(f"Colab Error: {colab_error}")
-                print(f"------------------------")
-                # Colab 실패 시 Google 기본 음성으로 대체 실행
-                return _google_tts_logic(text) 
+            err_msg = response.json().get("error", "Colab TTS 서버 오류")
+            raise Exception(f"Colab TTS 서버 응답 오류: {err_msg}")
 
-    except Exception as e:
-        # 4. (Fallback 예외) Google TTS 마저 실패한 경우
-        print(f"!!! [TTS FATAL ERROR] Google TTS마저 실패했습니다: {e}")
-        # 이 경우에도 Google TTS를 한 번 더 시도 (오류 로깅을 위해)
-        return _google_tts_logic(text)
-
+    except requests.exceptions.RequestException as e:
+        raise ConnectionError(f"Colab TTS 서버 연결 실패: {e}") '''
 
 ############################################################################################
 
@@ -422,7 +395,10 @@ def speech_to_text_from_file(audio_file):
     pydub을 사용하여 webm -> wav 변환을 명시적으로 수행하고, 변환 실패 시 상세 오류를 기록합니다.
     """
     try:
+        # pydub으로 오디오 파일 로드. FFmpeg가 없거나 지원하지 않는 코덱이면 여기서 CouldntDecodeError 발생
         audio_segment = AudioSegment.from_file(audio_file)
+        
+        # WAV 형식으로 변환하여 메모리 내 버퍼에 저장
         wav_buffer = io.BytesIO()
         audio_segment.export(wav_buffer, format="wav")
         wav_buffer.seek(0)
@@ -431,6 +407,7 @@ def speech_to_text_from_file(audio_file):
         with sr.AudioFile(wav_buffer) as source:
             audio_data = r.record(source)
         
+        # Google Web Speech API를 사용하여 텍스트로 변환
         text = r.recognize_google(audio_data, language='ko-KR')
         return text
 
@@ -446,17 +423,17 @@ def speech_to_text_from_file(audio_file):
         raise ValueError(f"오디오 처리 중 알 수 없는 오류 발생: {e}")
 
 
-# ----------------- [ ◀◀◀ 2. `create_diary_session` 수정 ] -----------------
-def create_diary_session(user_id, categories, speaker): # ✅ speaker 파라미터 추가
+#추가(승엽1)
+def create_diary_session(user_id, categories):
     """
-    새로운 일기 세션을 생성하고 선택된 해시태그와 스피커를 DB에 저장합니다.
+    새로운 일기 세션을 생성하고 선택된 해시태그를 DB에 저장합니다.
     """
     diary_doc = {
         "user_id": ObjectId(user_id),
         "categories": categories,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),
-        "speaker": speaker,  # ✅ 스피커(목소리) 설정 저장
+        #"speaker": speaker,  # 🔽 추가
         "conversations": [],
         "photos": [],
         "title": "",

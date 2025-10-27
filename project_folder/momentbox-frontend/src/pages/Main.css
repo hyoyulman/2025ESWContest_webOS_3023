@@ -50,6 +50,27 @@
   --dashboard-left: clamp(600px, 57vw, 1500px);
   --dashboard-bottom: 330px;                   /* 그대로 유지 */
   --dashboard-width: clamp(120px, 12vw, 250px); /* 더 크게 */
+
+  /* ====================================== */
+  /* 🗨 말풍선 위치/크기 커스텀 변수        */
+  /* ====================================== */
+
+  /* 말풍선 전체 박스의 기준 위치를 화면에서 직접 제어 */
+  /* 단위 px, %, vw, vh 모두 가능 */
+  --bubble-left: 30vw;    /* 말풍선을 가로로 어디 둘지 (왼쪽 기준). 값↑ → 오른쪽으로 이동 */
+  --bubble-bottom: 60vh;  /* 말풍선을 세로로 어디 둘지 (아래 기준). 값↑ → 위로 이동 */
+
+  /* 말풍선 본체 사이즈 */
+  --bubble-min-width: 230px;   /* 말풍선 최소 가로폭 */
+  --bubble-max-width: 400px;   /* 말풍선 최대 가로폭 */
+  --bubble-padding-y: 20px;    /* 말풍선 상하 여백 */
+  --bubble-padding-x: 25px;    /* 말풍선 좌우 여백 */
+
+  /* 말풍선 폰트 크기 */
+  --bubble-font-size: 1.1rem;
+
+  /* 말풍선 꼬리 위치 (백분율). 0% = 말풍선 왼쪽, 50% = 가운데 */
+  --bubble-tail-x: 30%;
 }
 
 /* ===== 전역 리셋 ===== */
@@ -111,6 +132,15 @@ html, body, #root {
   width: var(--dino-right-size);
   transform: translateY(var(--dino-right-y)) scale(var(--dino-right-scale));
 }
+
+.dino-container { /* 메인 말풍선*/
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styling for the bubble is now handled inline in Main.js */
 
 /* ===== 반응형 ===== */
 @media (max-width: 560px) {
@@ -258,7 +288,7 @@ html, body, #root {
     transform: rotate(0deg);
 }
 
-.camera-container .tooltip::after { /*카메라 말풍선*/
+.camera-container .tooltip::before { /*카메라 말풍선 꼬리 테두리*/
   content: "";
   position: absolute;
   top: 100%;
@@ -266,9 +296,24 @@ html, body, #root {
   transform: translateX(-50%);
   width: 0;
   height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid black;
+  z-index: 0;
+}
+
+.camera-container .tooltip::after { /*카메라 말풍선 꼬리 채우기*/
+  content: "";
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 15%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 10px solid black;
+  border-top: 10px solid white;
+  z-index: 1;
 }
 
 .camera-container:hover .tooltip {
@@ -376,7 +421,7 @@ html, body, #root {
   transform: translateX(-50%) rotate(0deg);
 }
 
-.tooltip-container .tooltip::after {
+.tooltip-container .tooltip::before { /* 일반 툴팁 꼬리 테두리 */
   content: "";
   position: absolute;
   top: 100%;
@@ -384,9 +429,24 @@ html, body, #root {
   transform: translateX(-50%);
   width: 0;
   height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid black;
+  z-index: 0;
+}
+
+.tooltip-container .tooltip::after { /* 일반 툴팁 꼬리 채우기 */
+  content: "";
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 10px solid black;
+  border-top: 10px solid white;
+  z-index: 1;
 }
 
 .tooltip-container:hover .tooltip {
@@ -406,6 +466,30 @@ html, body, #root {
   transform: none;
 }
 
-.decor-diary.tooltip-container .tooltip::after {
+.decor-diary.tooltip-container .tooltip::before { /* 일기 툴팁 꼬리 테두리 */
+  content: "";
+  position: absolute;
+  top: 100%;
   left: 85%;
+  transform: none; /* Remove translateX(-50%) */
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid black;
+  z-index: 0;
+}
+
+.decor-diary.tooltip-container .tooltip::after { /* 일기 툴팁 꼬리 채우기 */
+  content: "";
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 85%;
+  transform: none; /* Remove translateX(-50%) */
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid white;
+  z-index: 1;
 }

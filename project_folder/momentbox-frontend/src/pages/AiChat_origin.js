@@ -1,99 +1,140 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import styles from "./AiChat.module.css"; // CSS 모듈
+import styles from "./AiChat.module.css"; // CSS 모듈 임포트 변경
 import axios from "../api/axiosInstance";
 
-// (다른 import... QuestRecommendation, dinoRight 등은 그대로 둠)
+
+
 import QuestRecommendation from "./QuestRecommendation";
+
 import { outfitMapping } from "../constants/outfitMapping";
+
+
+
 import dinoRight from "../assets/dinoRight.png";
 
-// (배경 이미지 import... monitor, lamp 등은 그대로 둠)
+
+
+// 배경 이미지
+
 import monitor from "../assets/monitor.png";
+
 import lamp from "../assets/lamp.png";
+
 import keyboard from "../assets/keyboard.png";
+
 import tablet from "../assets/tablet.png";
+
 import memo from "../assets/memo.png";
+
 import book2 from "../assets/book2.png";
+
 import book3 from "../assets/book3.png";
 
 
-// --- [ ChatWindow 컴포넌트 수정 ] ---
+
+// 채팅 UI를 별도 컴포넌트로 분리
+
 const ChatWindow = ({
+
   messages,
+
   onSendMessage,
-  onToggleRecording, // 1. 이름 변경 (onToggleListening -> onToggleRecording)
-  isRecording, // 2. 이름 변경 (isListening -> isRecording)
-  isTranscribing, // 3. STT 처리 중 상태 추가
-  children,
-  showMicButton = true,
-  isGeneratingDiary,
-  diaryLoadingProgress,
+
+  onToggleListening,
+
+  isListening,
+
+  children, // 추가적인 버튼 등을 위한 슬롯
+
+  showMicButton = true, // New prop with default true
+
+  isGeneratingDiary, // New prop
+
+  diaryLoadingProgress, // New prop
+
 }) => {
+
   const chatBoxRef = useRef(null);
 
+
+
   useEffect(() => {
+
+    // 메시지 목록이 업데이트될 때마다 맨 아래로 스크롤
+
     if (chatBoxRef.current) {
+
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+
     }
+
   }, [messages]);
 
+
+
   return (
+
     <div className={styles.chatContainer}>
+
       <div className={styles.messages} ref={chatBoxRef}>
+
         {messages.map((m, i) => (
+
           <div key={i} className={`${styles.message} ${styles[m.role]}`}>
+
             <div className={styles.bubble}>{m.text}</div>
+
           </div>
+
         ))}
+
       </div>
-      <div className={styles.inputRow}>
-        {showMicButton && (
-          // 4. 녹음/전송 상태에 따라 버튼 스타일과 아이콘 변경
-          <button
-            className={`${styles.voiceRecBtn} ${
-              isRecording ? styles.isRecording : ""
-            }`}
-            onClick={onToggleRecording}
-            aria-label="음성 녹음"
-            disabled={isTranscribing} // 5. STT 처리 중 비활성화
-          >
-            {isTranscribing ? (
-              <div className={styles.spinner}></div> // 6. 전송 중 스피너
-            ) : isRecording ? (
-              // 7. 녹음 중 "중지" 아이콘 (사각형)
-              <svg className={styles.micIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 6h12v12H6z" />
-              </svg>
-            ) : (
-              // 8. 기본 "마이크" 아이콘
-              <svg className={styles.micIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="15" x2="8" y2="19"></line><line x1="16" y1="15" x2="16" y2="19"></line></svg>
-            )}
-          </button>
-        )}
-        {children}
-      </div>
+
+            <div className={styles.inputRow}>
+
+              {showMicButton && (
+
+                <button className={styles.voiceRecBtn} onClick={onToggleListening} aria-label="음성 인식">
+
+                  {isListening ? (
+
+                    <svg className={styles.micIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="15" x2="8" y2="19"></line><line x1="16" y1="15" x2="16" y2="19"></line><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path></svg>
+
+                  ) : (
+
+                    <svg className={styles.micIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="15" x2="8" y2="19"></line><line x1="16" y1="15" x2="16" y2="19"></line></svg>
+
+                  )}
+
+                </button>
+
+              )}
+
+              {children}
+
+            </div>
+
     </div>
+
   );
+
 };
 
 
+
 export default function AiChat() {
+
   const location = useLocation();
+
   const navigate = useNavigate();
+
   const { diaryId, initialMessages, initialPhoto, categories } = location.state || {};
-  
+
   const [messages, setMessages] = useState(initialMessages || []);
   const [currentPhoto, setCurrentPhoto] = useState(initialPhoto || null);
-  const [step, setStep] = useState("photoChat"); // Note: 'step' 상태가 현재 사용되지 않는 것 같습니다.
-  
-  // --- [ 녹음 상태 관리 ] ---
-  const [isRecording, setIsRecording] = useState(false); // isListening -> isRecording
-  const [isTranscribing, setIsTranscribing] = useState(false); // STT 전송 중 상태
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-  // ---
-
+  const [step, setStep] = useState("photoChat");
+  const [isListening, setIsListening] = useState(false);
   const [isLoadingNextPhoto, setIsLoadingNextPhoto] = useState(false);
   const [isGeneratingDiary, setIsGeneratingDiary] = useState(false);
   const [isLastPhoto, setIsLastPhoto] = useState(false);
@@ -103,8 +144,7 @@ export default function AiChat() {
   const [characterImage, setCharacterImage] = useState(null);
   const [isQuestVisible, setIsQuestVisible] = useState(false);
 
-  // --- [ recognitionRef 제거 ] ---
-  // const recognitionRef = useRef(null); // webkitSpeechRecognition 관련 코드 제거
+  const recognitionRef = useRef(null);
   const photoProgressIntervalRef = useRef(null);
   const diaryProgressIntervalRef = useRef(null);
   const initialTtsPlayed = useRef(false);
@@ -125,7 +165,6 @@ export default function AiChat() {
     }
   }
 
-  // (useEffect ... isLoadingNextPhoto, isGeneratingDiary, diaryId, initialTtsPlayed ... 코드는 변경 없음)
   useEffect(() => {
     if (isLoadingNextPhoto) {
       setPhotoLoadingProgress(0);
@@ -175,82 +214,39 @@ export default function AiChat() {
     }
   }, [initialMessages, diaryId]);
 
-  // --- [ webkitSpeechRecognition useEffect 제거 ] ---
-  // (기존 169-188 라인 useEffect 블록 전체 삭제)
-  
-  
-  // --- [ STT 오디오 전송 함수 ] ---
-  const sendAudioToServer = async (audioFile) => {
-    setIsTranscribing(true); // STT 시작
-    try {
-      const formData = new FormData();
-      // 'audio'는 ai_coach_routes.py의 request.files['audio']와 일치해야 함
-      formData.append("audio", audioFile, "recording.webm"); 
-
-      const res = await axios.post("/api/ai_coach/stt", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      if (res.data.status === "success" && res.data.text) {
-        // STT 성공 시, 반환된 텍스트를 챗봇 API로 전송
-        handleSendMessage(res.data.text);
-      } else {
-        throw new Error(res.data.message || "Invalid STT response");
-      }
-    } catch (err) {
-      console.error("STT 실패:", err);
-      setMessages((prev) => [...prev, { role: "ai", text: "음성 인식에 실패했습니다. 다시 시도해주세요." }]);
-    } finally {
-      setIsTranscribing(false); // STT 완료
+  useEffect(() => {
+    if (!('webkitSpeechRecognition' in window)) {
+      console.error("Web Speech API is not supported by this browser.");
+      return;
     }
-  };
+    recognitionRef.current = new window.webkitSpeechRecognition();
+    recognitionRef.current.continuous = false;
+    recognitionRef.current.interimResults = false;
+    recognitionRef.current.lang = 'ko-KR';
 
+    recognitionRef.current.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      handleSendMessage(transcript);
+      setIsListening(false);
+    };
+    recognitionRef.current.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+    };
+    recognitionRef.current.onend = () => {
+      setIsListening(false);
+    };
+  }, []);
 
-  // --- [ '클릭/클릭' 녹음 핸들러 ] ---
-  const handleToggleRecording = async () => {
-    if (isRecording) {
-      // --- 녹음 중지 로직 ---
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
-        mediaRecorderRef.current.stop(); // onstop 이벤트 핸들러가 트리거됨
-      }
-      setIsRecording(false);
+  const handleToggleListening = () => {
+    if (isListening) {
+      recognitionRef.current.stop();
     } else {
-      // --- 녹음 시작 로직 ---
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm' }); // 포맷 지정
-
-        mediaRecorderRef.current.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            audioChunksRef.current.push(event.data);
-          }
-        };
-
-        mediaRecorderRef.current.onstop = () => {
-          // 녹음이 중지되면 Blob 생성
-          const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-          const audioFile = new File([audioBlob], "recording.webm", { type: "audio/webm" });
-          
-          sendAudioToServer(audioFile); // 생성된 파일을 STT 서버로 전송
-          
-          audioChunksRef.current = []; // 청크 비우기
-          // 스트림 트랙 중지 (브라우저의 마이크 아이콘 끄기)
-          stream.getTracks().forEach(track => track.stop());
-        };
-
-        audioChunksRef.current = []; // 녹음 시작 전 항상 청크 비우기
-        mediaRecorderRef.current.start();
-        setIsRecording(true);
-
-      } catch (err) {
-        console.error("마이크 접근 실패:", err);
-        alert("마이크 접근에 실패했습니다. 브라우저 설정을 확인해주세요.");
-      }
+      recognitionRef.current.start();
     }
+    setIsListening(!isListening);
   };
 
-
-  // handleSendMessage, handleNextPhoto, handleGenerateDiary 코드는 변경 없음
   const handleSendMessage = async (text) => {
     if (!text) return;
     try {
@@ -348,12 +344,12 @@ export default function AiChat() {
       quest={recommendedQuest}
       categories={categories}
       progress={diaryLoadingProgress}
-      isQuestVisible={true}
+      isQuestVisible={true} // 이미 true니까 명시적으로
     />
   )}
 
     <div className={styles.scene}>
-      {/* (배경 오브젝트... monitor, lamp 등은 변경 없음) */}
+      {/* 배경 오브젝트 */}
       <img className={`${styles.obj} ${styles.memo}`} src={memo} alt="메모" />
       <img className={`${styles.obj} ${styles.monitor}`} src={monitor} alt="모니터" />
       <img className={`${styles.obj} ${styles.lamp}`} src={lamp} alt="스탠드" />
@@ -400,15 +396,12 @@ export default function AiChat() {
               <ChatWindow
                 messages={messages}
                 onSendMessage={handleSendMessage}
-                onToggleRecording={handleToggleRecording} // 이름 변경
-                isRecording={isRecording}                 // 이름 변경
-                isTranscribing={isTranscribing}           // STT 상태 전달
-                showMicButton={true}                      // ★★★ [요구사항 3] 수정: 항상 true
+                onToggleListening={handleToggleListening}
+                isListening={isListening}
+                showMicButton={!isLastPhoto}
                 isGeneratingDiary={isGeneratingDiary}
                 diaryLoadingProgress={diaryLoadingProgress}
               >
-                {/* [요구사항 3] 수정: 이제 마이크 버튼이 항상 보이므로, 
-                    일기 생성 버튼은 마이크 버튼 *옆에* 표시됩니다. */}
                 {isLastPhoto && (
                   isGeneratingDiary ? (
                     <div className={styles.inputProgressWrapper}>
@@ -427,7 +420,23 @@ export default function AiChat() {
             </div>
           </div>
         )}
+
+        {/* generalChat 단계는 제거된 상태 (주석 유지) */}
+        {/*
+        {step === "generalChat" && (
+          <ChatWindow ...>
+            {!isGeneratingDiary && (
+              <button className={styles.primaryBtn} onClick={handleGenerateDiary}>
+                오늘의 일기 생성
+              </button>
+            )}
+          </ChatWindow>
+        )}
+        */}
       </div>
+
+      {/* ✅ 오버레이를 wrap 내부로 이동 */}
+      {/* Diary generation progress bar is now in-context */}
     </div>
   </div>
 );

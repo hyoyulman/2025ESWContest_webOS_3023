@@ -1,210 +1,366 @@
+
+/* === Root Variables for Theming (Cute Aesthetic) === */
+:root {
+    --primary-color: #84a98c; /* Soft Green */
+    --primary-hover-color: #6b9080;
+    --secondary-color: #b5838d; /* Muted Rose */
+    --background-color: #fcfdff; /* Very light background */
+    --card-background-color: #ffffff;
+    --card-border-color: #e0e0e0; /* Softer border */
+    --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); /* Slightly more pronounced but soft shadow */
+    --text-color: #4a4e69; /* Darker, soft text */
+    --text-muted-color: #888b9e; /* Lighter muted text */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --success-color: #a7c957; /* Playful Green */
+    --danger-color: #e63946; /* Clear Red */
+    --warning-color: #f4a261; /* Warm Orange */
+    --info-color: #457b9d; /* Calm Blue */
+}
+
+/* === Main Container === */
 .dashboard-container {
-  padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2.5rem;
+    background-color: var(--background-color);
+    font-family: var(--font-family);
+    color: var(--text-color);
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 20px; /* More rounded container */
+    box-shadow: var(--card-shadow);
 }
 
-.device-section {
-  margin-bottom: 3rem;
+.dashboard-container h1 {
+    font-size: 2.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    text-align: center;
+    letter-spacing: -0.5px;
 }
 
-.device-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+/* === Dashboard Actions (Appliance Management) === */
+.dashboard-actions {
+    margin-bottom: 2.5rem;
+    text-align: center; /* Center the button */
 }
 
-.device-card {
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  display: flex;
-  overflow: hidden;
+.manage-devices-button {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 0.9rem 2rem;
+    border-radius: 30px; /* More rounded button */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: inline-block; /* Allow centering */
 }
 
-/* --- 기기별 고유 색상 --- */
-.device-type-tv { border-color: #e57373; }
-.device-type-ac { border-color: #81d4fa; }
-.device-type-washer { border-color: #90caf9; }
-.device-type-refrigerator { border-color: #a5d6a7; }
-.device-type-styler { border-color: #ce93d8; }
-.device-type-dishwasher { border-color: #b0bec5; }
-.device-type-air_purifier { border-color: #80cbc4; }
-.device-type-robot_vacuum { border-color: #f48fb1; }
-.device-type-dryer { border-color: #ffe082; }
-
-.device-image-container {
-  width: 100px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #e9ecef;
+.manage-devices-button:hover {
+    background-color: var(--primary-color); /* Change color on hover */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    transform: translateY(-3px);
 }
 
-.device-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.device-info {
-  padding: 1.5rem;
-  flex-grow: 1;
-}
-
-/* Animation and Feedback */
-.device-card.power-on {
-  background-color: #f0f7ff; /* A slightly different background for powered-on devices */
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2), 0 0 0 2px rgba(0, 123, 255, 0.3); /* Blue glow */
-}
-
-.device-card.status-running, .device-card.status-cleaning {
-  background-color: #e3f2fd;
-  border-color: #007bff; /* Stronger border color when running */
-}
-
-.device-card.status-completed {
-  background-color: #fffde7;
-}
-
-.device-info h3 {
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.5rem;
-}
-
-.device-status p { margin: 0.5rem 0; }
-.timer-section { margin-top: 1rem; }
-.timer-section progress { width: 100%; }
-
-.device-info button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.device-info button:hover { background-color: #0056b3; }
-.device-info button:disabled { background-color: #ccc; cursor: not-allowed; }
-
+/* === Tabs === */
 .tabs {
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #eee;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--card-border-color);
+    display: flex;
+    justify-content: center; /* Center tabs */
+    gap: 1rem;
 }
 
 .tabs button {
-  padding: 1rem 1.5rem;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-size: 1.1rem;
-  color: #666;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
+    padding: 1rem 1.8rem;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-muted-color);
+    border-bottom: 4px solid transparent; /* Thicker border for active */
+    transition: all 0.3s ease;
+    margin-bottom: -1px;
+    font-weight: 500;
+}
+
+.tabs button:hover {
+    color: var(--primary-color);
 }
 
 .tabs button.active {
-  color: #007bff;
-  border-bottom-color: #007bff;
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 700;
 }
 
-.control-group {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* === Device Section & Grid === */
+.device-section {
+    margin-bottom: 3.5rem;
 }
 
-.control-group label { font-weight: bold; }
-.control-group select { padding: 0.3rem; border-radius: 4px; border: 1px solid #ccc; }
-
-.simulate-button.cancel-button {
-  background-color: #dc3545; /* Red color for cancel/stop */
+.device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Slightly smaller min width */
+    gap: 2.5rem; /* Increased gap */
 }
 
-.simulate-button.cancel-button:hover {
-
-  background-color: #c82333;
-
+/* === Category Styling === */
+.device-category-section {
+    margin-bottom: 3.5rem;
 }
 
+.category-title {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 1.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 3px solid var(--primary-color);
+    display: inline-block;
+    font-weight: 600;
+}
 
+/* === Base Device Card === */
+.device-card {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: 18px; /* More rounded cards */
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
 
-/* Power Button Icon Styling */
+.device-card:hover {
+    transform: translateY(-8px) scale(1.02); /* More playful hover */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* === Card Header === */
+.device-card-header {
+    display: flex;
+    align-items: center;
+    padding: 1.2rem 1.8rem;
+    border-bottom: 1px solid var(--card-border-color);
+    background-color: #f8f8f8; /* Light header background */
+}
+
+.device-icon {
+    width: 45px; /* Slightly larger icon container */
+    height: 45px;
+    margin-right: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color); /* Icon background */
+    border-radius: 50%; /* Circular icon background */
+    color: white; /* White icon */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.device-icon .material-icons {
+    font-size: 28px; /* Larger icon */
+}
+
+.device-card-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
 
 .power-button {
-
+    margin-left: auto;
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
-    width: 40px; /* Fixed width */
-
-    height: 40px; /* Fixed height */
-
-    padding: 0; /* Remove padding */
-
-    border-radius: 50%; /* Make it circular */
-
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
-
 
 .power-button .material-icons {
-
-    font-size: 24px; /* Icon size */
-
-    line-height: 1; /* Ensure icon is centered vertically */
-
+    font-size: 26px;
 }
-
-
-
-/* Change color based on power state */
 
 .power-button.on {
-
-    background-color: #28a745; /* Green for ON */
-
+    background-color: var(--success-color);
     color: white;
-
 }
 
-
-
 .power-button.on:hover {
-    background-color: #218838;
+    background-color: #8cb34a;
+    transform: scale(1.1);
 }
 
 .power-button.off {
-    background-color: #6c757d; /* Gray for OFF */
+    background-color: var(--secondary-color);
     color: white;
 }
 
 .power-button.off:hover {
-    background-color: #5a6268;
+    background-color: #9e6f78;
+    transform: scale(1.1);
 }
 
-/* Category Grouping Styles */
-.device-category-section {
-  margin-bottom: 3rem;
+/* === Card Body === */
+.device-card-body {
+    padding: 1.8rem;
+    flex-grow: 1;
 }
 
-.category-title {
-  font-size: 1.8rem;
-  color: #343a40;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 3px solid #007bff;
-  display: inline-block;
+.device-status p {
+    margin: 0.4rem 0;
+    color: var(--text-muted-color);
+    font-size: 1rem;
 }
 
+.device-status p strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
 
+/* === Status Specific Styling === */
+.device-card.power-on {
+    border-left: 8px solid var(--primary-color); /* Thicker, more prominent border */
+}
+
+.device-card.status-running,
+.device-card.status-cleaning {
+    border-left: 8px solid var(--info-color);
+}
+
+.device-card.status-completed {
+    border-left: 8px solid var(--warning-color);
+}
+
+/* === Timer & Progress === */
+.timer-section {
+    margin-top: 1.5rem;
+}
+
+.timer-section progress {
+    height: 10px; /* Thicker progress bar */
+    border-radius: 5px;
+}
+
+.timer-section progress::-webkit-progress-bar {
+    background-color: #e9ecef;
+}
+
+.timer-section progress::-webkit-progress-value {
+    background-color: var(--primary-color);
+}
+
+/* === Controls === */
+.control-group {
+    margin-top: 1.5rem;
+    gap: 0.8rem;
+}
+
+.control-group label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.control-group select,
+.control-group input[type="range"],
+.control-group input[type="number"] {
+    padding: 0.6rem 1rem;
+    border-radius: 10px; /* More rounded inputs */
+    border: 1px solid var(--card-border-color);
+    background-color: #fdfdfd;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.control-group input[type="range"] {
+    padding: 0;
+}
+
+/* === Action Buttons === */
+.control-button.simulate-button {
+    padding: 0.9rem 1.5rem;
+    margin-top: 2rem;
+    border-radius: 12px; /* More rounded buttons */
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.control-button.simulate-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.control-button.simulate-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.control-button.simulate-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.control-button.simulate-button.cancel-button {
+    background-color: var(--danger-color);
+}
+
+.control-button.simulate-button.cancel-button:hover {
+    background-color: #cc2936;
+}
+
+.control-button.simulate-button.completed-button {
+    background-color: var(--warning-color);
+    color: var(--text-color);
+}
+
+.control-button.simulate-button.completed-button:hover {
+    background-color: #e09a52;
+}
+
+/* === Device Image (No longer a separate container) === */
+.device-image {
+  display: none;
+}
+
+/* === Loading State === */
+.loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly less transparent */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    color: var(--primary-color);
+    font-size: 1.5rem; /* Larger loading text */
+    font-weight: 600;
+}
+
+.spinner {
+    border: 5px solid rgba(132, 169, 140, 0.2); /* Spinner color based on new primary */
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    width: 50px; /* Larger spinner */
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

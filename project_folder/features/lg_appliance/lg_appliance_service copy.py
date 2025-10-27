@@ -131,12 +131,12 @@ def initialize_master_devices_db():
                     
                     # --- [ ◀◀◀ 추가된 부분 시작 ] ---
                     "course_times": { # 각 코스별 시간 (초 단위)
-                        "convection": 60, # 예: 30분
-                        "grill": 120,      # 예: 20분
-                        "steam": 80,      # 예: 40분
-                        "air_fry": 30      # 예: 25분
+                        "convection": 1800, # 예: 30분
+                        "grill": 1200,      # 예: 20분
+                        "steam": 2400,      # 예: 40분
+                        "air_fry": 1500      # 예: 25분
                     },
-                    "total_time": 60,    # 기본 코스(convection)의 시간
+                    "total_time": 1800,    # 기본 코스(convection)의 시간
                     # --- [ 추가된 부분 끝 ] ---
                     
                     "remaining_time": 0, # ★ 남은 시간 필드도 명시적으로 추가
@@ -676,25 +676,6 @@ def control_device(user_id, device_name, command, value=None):
     
     elif command == "mode" and value and "modes" in device and value in device["modes"]:
         update_fields["mode"] = value
-        # ★ 추가: 만약 오븐('oven')이고 course_times가 있다면 시간도 업데이트
-        if device.get("type") == "oven":
-            course_times = device.get("course_times")
-            # 사용자 기기에 course_times 없으면 마스터에서 가져오기 (simulate과 동일 로직)
-            if not course_times and device.get("master_device_id"):
-                 master_device = mongo.db.LG_devices.find_one({"_id": device.get("master_device_id")})
-                 if master_device:
-                     master_settings = master_device.get("default_settings", {})
-                     course_times = master_settings.get("course_times")
-                     if course_times: update_fields["course_times"] = course_times # 사용자 기기에도 저장
-            
-            # course_times와 새 mode(value)에 해당하는 시간이 있으면 업데이트
-            if course_times and value in course_times:
-                 new_time = course_times[value]
-                 update_fields["total_time"] = new_time
-                 update_fields["remaining_time"] = new_time # 대기 상태이므로 남은 시간=총 시간
-                 print(f"[Control Debug] Oven mode changed to '{value}'. Updated time to {new_time}s.")
-            else:
-                 print(f"[Control Debug] Oven mode changed to '{value}'. Time info not found.")
     
     elif command == "course" and value and "courses" in device and value in device["courses"]:
         update_fields["course"] = value
@@ -732,53 +713,10 @@ def simulate_device_usage(user_id, device_name, start_time_iso=None):
     device_type = device.get("type")
     update_fields, inc_fields = {}, {}
     
-    # --- [ 사이클 가전 시작 로직 재수정 ] ---
-# --- [ 사이클 가전 시작 로직 재수정 ] ---
     if device_type in ["washer", "dryer", "dishwasher", "styler", "shoe_care", "oven", "massage_chair"]:
         current_status = device.get("status")
         if current_status in ["waiting", "idle", None]:
-            
-            total_time_for_course = 0 # 초기화
-            
-            # 1. 사용자 기기에서 course_times와 현재 설정(course 또는 mode) 가져오기
-            course_times = device.get("course_times")
-            # ★ 수정: course가 없으면 mode를 확인 (오븐 대응)
-            current_setting = device.get("course") or device.get("mode") 
-
-            # 1.1 사용자 기기에 course_times가 없다면 마스터 템플릿 조회
-            if not course_times and device.get("master_device_id"):
-                print(f"[Simulate Debug] User device lacks course_times. Fetching from master: {device.get('master_device_id')}")
-                master_device = mongo.db.LG_devices.find_one({"_id": device.get("master_device_id")})
-                if master_device:
-                    master_settings = master_device.get("default_settings", {})
-                    course_times = master_settings.get("course_times")
-                    if course_times:
-                        update_fields["course_times"] = course_times 
-                        print(f"[Simulate Debug] Found course_times in master, updating user device.")
-
-            # 2. 유효한 course_times와 현재 설정(current_setting)이 있으면 시간 계산
-            # ★ 수정: current_course -> current_setting 사용
-            if course_times and current_setting and current_setting in course_times:
-                total_time_for_course = course_times[current_setting]
-                print(f"[Simulate Debug] Calculated time from course_times: {total_time_for_course}s for setting '{current_setting}'")
-
-            # 3. 그래도 시간이 0이면 fallback 사용
-            if not total_time_for_course or total_time_for_course <= 0:
-                fallback_time = device.get("total_time", 1800) 
-                total_time_for_course = fallback_time if fallback_time > 0 else 1800
-                print(f"[Simulate Debug] Using fallback time: {total_time_for_course}s")
-            
-            # 4. 최종 시간 업데이트
-            update_fields.update({
-                "status": "running", 
-                "power": "on", 
-                "cycle_start_timestamp": start_time_kst, 
-                "power_on_timestamp": start_time_kst, 
-                "total_time": total_time_for_course,      
-                "remaining_time": total_time_for_course   
-            })
-        
-        # --- [ 종료/완료 로직은 기존과 동일 ] ---
+            update_fields.update({"status": "running", "power": "on", "cycle_start_timestamp": start_time_kst, "power_on_timestamp": start_time_kst, "remaining_time": device.get("total_time", 60)})
         elif current_status == "running":
             update_fields.update({"status": "completed", "cycle_start_timestamp": None, "remaining_time": 0, "power": "off", "power_on_timestamp": None})
             inc_fields["run_count"] = 1

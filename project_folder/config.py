@@ -9,7 +9,9 @@ class Config:
     # --- 기본 설정 ---
     # .env 파일에서 SECRET_KEY를 불러옵니다. 없으면 기본값을 사용합니다.
     SECRET_KEY = os.getenv('SECRET_KEY', 'a-default-fallback-secret-key')
-
+    
+    COLAB_TTS_URL = os.getenv("COLAB_TTS_URL")
+    
     # --- 데이터베이스 설정 ---
     # .env 파일에서 MONGO_URI를 불러옵니다.
     MONGO_URI = os.getenv('MONGO_URI')

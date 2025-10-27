@@ -62,36 +62,39 @@ def chat():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-# --- [ TTS 라우트 수정 ] ---
 @ai_coach_bp.route('/tts', methods=['POST'])
-@jwt_required() 
+@jwt_required() # API 남용 방지를 위해 인증 필요
 def text_to_speech():
-    """
-    텍스트와 diary_id를 받아, 해당 일기에 설정된 스피커(목소리)로 음성을 변환합니다.
-    Colab 서버 실패 시 Google 기본 음성으로 자동 대체됩니다.
-    """
+    """텍스트를 음성으로 변환하여 오디오 데이터를 반환합니다."""
     try:
-        data = request.get_json()
-        text = data.get('text')
-        diary_id = data.get('diary_id') # ✅ diary_id 받기
-
-        if not text or not diary_id:
-            return jsonify({"status": "error", "message": "텍스트 또는 diary_id가 없습니다."}), 400
+        text = request.json.get('text')
+        if not text:
+            return jsonify({"status": "error", "message": "텍스트가 없습니다."}), 400
         
-        # 1. 서비스가 (오디오 데이터, 마임타입) 튜플을 반환하도록 수정될 예정입니다.
-        audio_content, mimetype = ai_coach_service.text_to_speech_logic(text, diary_id)
-        
-        # 2. 서비스에서 반환된 마임타입을 응답에 사용합니다.
-        return Response(audio_content, mimetype=mimetype)
-    
+        audio_content = ai_coach_service.text_to_speech_logic(text)
+        return Response(audio_content, mimetype='audio/mpeg')
     except Exception as e:
         print(f"Error in TTS endpoint: {e}")
         traceback.print_exc() # Print the full traceback
         return jsonify({"status": "error", "message": str(e)}), 500
     
     
-''' 
-(참고) 기존 주석 처리된 코드는 /tts 엔드포인트가 이미 활성화되어 있으므로 삭제합니다.
+''' 이 부분을 수정하면 바뀜
+@ai_coach_bp.route('/tts', methods=['POST'])
+@jwt_required()
+def text_to_speech():
+    try:
+        text = request.json.get('text')
+        diary_id = request.json.get('diary_id')
+        if not text or not diary_id:
+            return jsonify({"status": "error", "message": "텍스트 또는 diary_id 없음"}), 400
+
+        audio_content = ai_coach_service.text_to_speech_logic(text, diary_id)
+        return Response(audio_content, mimetype='audio/wav')
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"status": "error", "message": str(e)}), 500
 '''
 
 @ai_coach_bp.route('/stt', methods=['POST'])
@@ -104,30 +107,33 @@ def speech_to_text():
     audio_file = request.files['audio']
     
     try:
+        # STT 서비스는 현재 user_id를 사용하지 않지만, 인증된 사용자만 호출하도록 제한합니다.
         text = ai_coach_service.speech_to_text_from_file(audio_file)
         return jsonify({"status": "success", "text": text})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# --- [ 일기 생성 라우트 수정 ] ---
+#############################추가 (예진)
 @ai_coach_bp.route('/create_diary', methods=['POST'])
 @jwt_required()
 def create_diary():
-    """해시태그 선택 및 스피커(목소리) 설정 후 새로운 일기 세션 생성"""
+    """해시태그 선택 후 새로운 일기 세션 생성"""
     try:
         user_id = current_user['_id']
-        data = request.get_json() # ✅ 전체 JSON 데이터 받기
+        categories = request.json.get('categories', [])
+        diary_id = ai_coach_service.create_diary_session(user_id, categories)
         
+        #-------------------------------------------------
+        '''user_id = current_user['_id']
+        data = request.get_json()
         categories = data.get('categories', [])
-        # ✅ 프론트에서 보낸 'speaker' 값을 받습니다. (예: "default", "soyeon", "yejin")
-        # ✅ 값이 없으면 "default"를 기본값으로 사용합니다.
-        speaker = data.get('speaker', 'default') 
-        
-        # ✅ 서비스 함수에 speaker 값을 전달합니다.
-        diary_id = ai_coach_service.create_diary_session(user_id, categories, speaker)
+        speaker = data.get('speaker', None)  # ✅ speaker 추가
+        diary_id = ai_coach_service.create_diary_session(user_id, categories, speaker)'''
+        #-----------------------------------------------
         
         return jsonify({"status": "success", "diary_id": diary_id})
     except Exception as e:
+        #traceback.print_exc() 이 부분도 마찬가지
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @ai_coach_bp.route('/generate_diary', methods=['POST'])

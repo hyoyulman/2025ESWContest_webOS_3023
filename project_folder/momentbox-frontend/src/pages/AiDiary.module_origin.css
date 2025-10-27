@@ -412,9 +412,7 @@ body { overflow: hidden; }
 
 .speakerButtonContainer {
   display: flex;
-  justify-content: center; /* ◀◀◀ 3개 버튼을 항상 중앙 정렬 */
-  flex-wrap: wrap; /* ◀◀◀ (혹시 모르니) 공간 부족 시 줄바꿈 허용 */
-  gap: 8px; /* ◀◀◀ 간격 살짝 줄임 (10px -> 8px) */
+  gap: 10px;
   background-color: #e9ecef;
   padding: 6px;
   border-radius: 12px;
@@ -422,7 +420,7 @@ body { overflow: hidden; }
 
 .speakerButton {
   border: none;
-  padding: 10px 15px; /* ◀◀◀ 가로 패딩 살짝 줄임 (20px -> 15px) */
+  padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
   background-color: transparent;

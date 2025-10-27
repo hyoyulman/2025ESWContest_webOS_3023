@@ -107,17 +107,13 @@ def get_master_devices_route():
     except Exception as e:
         traceback.print_exc()
         return jsonify({"status": "error", "message": str(e)}), 500
-    
+
 @lg_appliance_bp.route('/master/categories', methods=['GET'])
 @jwt_required()
-def get_master_categories():
-    """
-    DB에 저장된 마스터 가전들의 모든 'category' 목록을 중복 없이 반환합니다.
-    """
+def get_master_categories_route():
     try:
-        # service 파일에 이미 만들어져 있던 함수를 호출합니다.
         categories = lg_appliance_service.get_available_categories()
-        return jsonify({"status": "success", "categories": categories}), 200
+        return jsonify({"status": "success", "categories": categories})
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"status": "error", "message": f"카테고리 조회 중 오류 발생: {str(e)}"}), 500
+        return jsonify({"status": "error", "message": str(e)}), 500
