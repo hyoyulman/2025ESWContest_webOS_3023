@@ -10,6 +10,16 @@
   align-items: center;
   justify-content: center;
   z-index: 10000;
+
+  /* 닫힐 때 부드럽게 사라지는 효과를 주기 위한 기본값 */
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* isClosing=true일 때 overlay에 추가해줄 클래스 */
+.fadeOut {
+  opacity: 0;                /* 화면에서 사라진 것처럼 보이게 */
+  pointer-events: none;      /* 클릭 막기 */
 }
 
 .lightbox {
@@ -17,10 +27,10 @@
   border-radius: 10px;
   padding: 20px;
   position: relative;
-  width: 80vw; /* 화면 너비의 80% */
-  height: 80vh; /* 화면 높이의 80% */
-  max-width: 1200px; /* 최대 너비 제한 */
-  max-height: 900px; /* 최대 높이 제한 */
+  width: 80vw;         /* 화면 너비의 80% */
+  height: 80vh;        /* 화면 높이의 80% */
+  max-width: 1200px;   /* 최대 너비 제한 */
+  max-height: 900px;   /* 최대 높이 제한 */
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -39,7 +49,7 @@
   z-index: 10;
 }
 
-/* content 영역에 세로 스크롤을 적용합니다. */
+/* content 영역에 세로 스크롤을 적용 */
 .content {
   padding: 15px;
   text-align: center;
@@ -76,7 +86,7 @@
   border-bottom: 3px solid #e89a9a;
 }
 
-/* --- 수정된 상점 스타일 --- */
+/* --- 상점 헤더 스타일 --- */
 
 .header {
   display: grid;
@@ -109,7 +119,7 @@
   gap: 10px;
 }
 
-/* 상품 그리드의 높이가 콘텐츠에 따라 결정되도록 수정 */
+/* 상품 그리드 */
 .productGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -136,8 +146,6 @@
   transform: scale(1.03);
   box-shadow: 0 6px 12px rgba(0,0,0,0.12);
 }
-
-
 
 .productImage {
   width: 100%;
@@ -180,7 +188,7 @@
   color: #777;
 }
 
-/* 구매하기 버튼 스타일 */
+/* 구매/입히기 버튼 스타일 */
 .buyButton {
   position: absolute;
   top: 50%;
@@ -200,7 +208,13 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* 상품 칸에 마우스 올렸을 때 구매 버튼 보이기 */
+/* 착용 중인 아이템용 스타일 (선택사항: 시각적 강조) */
+.equippedButton {
+  background-color: #5c5c5c !important;
+  color: #fff !important;
+}
+
+/* 상품 칸에 마우스 올렸을 때 버튼 보이기 */
 .productItem:hover .buyButton {
   opacity: 1;
   visibility: visible;
@@ -217,7 +231,7 @@
   box-shadow: none;
 }
 
-/* 구매완료 팝업 스타일 */
+/* 구매/착용 완료 팝업 스타일 */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -234,7 +248,18 @@
   border-radius: 15px;
   font-size: 1.5rem;
   font-weight: bold;
-  z-index: 2000; /* lightbox보다 위에 있도록 z-index를 높게 설정 */
+  z-index: 11000; /* overlay(10000)보다 크게 설정해야 앞에 보임 */
   animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  pointer-events: none; /* 팝업 클릭이 다른 요소에 방해되지 않게 */
 }
 
+.emptyClosetMessage {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #888;
+  font-style: italic;
+  grid-column: span 3;
+  white-space: pre-line;
+}

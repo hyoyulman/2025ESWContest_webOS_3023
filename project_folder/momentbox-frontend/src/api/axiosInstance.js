@@ -2,7 +2,8 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://192.168.0.112:5001",
+  //baseURL: "https://192.168.0.111:5001",
+  baseURL: "",
   headers: { // ★★★ 이 부분을 추가합니다 ★★★
     'Content-Type': 'application/json',
   }

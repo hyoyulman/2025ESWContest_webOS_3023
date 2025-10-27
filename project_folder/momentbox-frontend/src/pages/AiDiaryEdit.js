@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./AiDiaryEdit.module.css";
 import axios from "../api/axiosInstance";
@@ -8,7 +8,7 @@ import book2 from "../assets/book2.png";
 import ink from "../assets/ink.png";
 import pen from "../assets/pen.png";
 
-const PREDEFINED_CATEGORIES = ["운동", "공부", "여행", "피곤", "행복"];
+const PREDEFINED_CATEGORIES = ["설렘", "우울", "행복", "피곤", "걱정"];
 
 export default function AiDiaryEdit() {
   const { id: diaryId } = useParams();
@@ -22,13 +22,26 @@ export default function AiDiaryEdit() {
   const [allAvailablePhotos, setAllAvailablePhotos] = useState([]);
   const [selectedDiaryPhotos, setSelectedDiaryPhotos] = useState([]);
   const [activePhoto, setActivePhoto] = useState(null);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showSavePopup, setShowSavePopup] = useState(false);
+  
   const textareaRef = useRef(null);
 
-  const emojis = [
-    '😀', '😂', '😍', '🤔', '😢', '😠', '👍', '👎', '❤️', '🔥', '🎉', '⭐',
-    '☀️', '☁️', '🌧️', '❄️', '🌸', '🍁', '🐶', '🐱', '🍕', '☕', '✈️', '⚽'
-  ];
+  const formattedDate = useMemo(() => {
+    if (!diary?.created_at) return "";
+    try {
+      const date = new Date(diary.created_at);
+      if (isNaN(date.getTime())) return "유효하지 않은 날짜";
+      return new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }).format(date);
+    } catch (e) {
+      return "날짜 변환 오류";
+    }
+  }, [diary?.created_at]);
+
+  
 
   useEffect(() => {
     const fetchDiary = async () => {
@@ -100,7 +113,10 @@ export default function AiDiaryEdit() {
         categories: editableCategories,
         status: "completed",
       });
-      alert("일기가 성공적으로 저장되었습니다.");
+      setShowSavePopup(true);
+      setTimeout(() => {
+        setShowSavePopup(false);
+      }, 2000);
       setIsEditing(false);
       const response = await axios.get(`/api/diaries/${diaryId}`);
       setDiary(response.data);
@@ -111,22 +127,7 @@ export default function AiDiaryEdit() {
     }
   };
 
-  const handleEmojiClick = (emoji) => {
-    if (textareaRef.current) {
-      const { selectionStart, selectionEnd } = textareaRef.current;
-      const newContent = 
-        editableContent.substring(0, selectionStart) + 
-        emoji + 
-        editableContent.substring(selectionEnd);
-      
-      setEditableContent(newContent);
-      
-      textareaRef.current.focus();
-      setTimeout(() => {
-        textareaRef.current.selectionStart = textareaRef.current.selectionEnd = selectionStart + emoji.length;
-      }, 0);
-    }
-  };
+  
 
   const toggleCategory = (category) => {
     setEditableCategories((prev) =>
@@ -198,19 +199,7 @@ export default function AiDiaryEdit() {
                         value={editableContent}
                         onChange={(e) => setEditableContent(e.target.value)}
                       />
-                      {showEmojiPicker && (
-                        <div className={styles.emojiPicker}>
-                          {emojis.map((emoji, index) => (
-                            <span 
-                              key={index} 
-                              className={styles.emoji}
-                              onClick={() => handleEmojiClick(emoji)}
-                            >
-                              {emoji}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      
                     </div>
                   </div>
                   <div className={styles.editColumnRight}>
@@ -257,7 +246,7 @@ export default function AiDiaryEdit() {
                 <div className={styles.diaryDisplayContainer}>
                   <header className={styles.diaryHeader}>
                     <h1 className={styles.title}>{editableTitle}</h1>
-                    <p className={styles.date}>2025년 9월 28일</p>
+                    <p className={styles.date}>{formattedDate}</p>
                     {diary?.categories?.length > 0 && (
                       <div className={styles.categoryTags}>
                         {diary.categories.map((cat) => (
@@ -297,14 +286,7 @@ export default function AiDiaryEdit() {
               )}
 
               <div className={styles.actionsContainer}>
-                {isEditing && (
-                  <button 
-                    className={styles.emojiToggleButton}
-                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  >
-                    😀
-                  </button>
-                )}
+                
                 <button
                   className={styles.editButton}
                   onClick={isEditing ? handleSave : handleEditClick}
@@ -348,6 +330,12 @@ export default function AiDiaryEdit() {
           </div>
         </section>
       </div>
+
+      {showSavePopup && (
+        <div className={styles.savePopup}>
+          일기가 성공적으로 저장되었습니다.
+        </div>
+      )}
     </div>
   );
 }

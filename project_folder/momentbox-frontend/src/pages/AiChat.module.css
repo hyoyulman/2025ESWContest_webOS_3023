@@ -194,8 +194,6 @@
   border-top: 1px solid #f1f3f5;
   justify-content: center;
   align-items: center;
-  position: relative; /* 추가 */
-  z-index: 20; /* 추가 */
 }
 
 .primaryBtn, .secondaryBtn {
@@ -398,4 +396,50 @@
     background-color: #007bff;
     border-radius: 5px;
     transition: width 0.3s ease-in-out;
+}
+
+.progressWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.photoProgressBarContainer {
+  flex-grow: 1;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  height: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+}
+
+.progressBar {
+  background-color: #007bff;
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.2s ease-in-out;
+}
+
+.progressText {
+  color: #0a0a0a;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.photoChatContainer.fullWidthChat {
+  gap: 0;
+}
+
+.inputProgressWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }

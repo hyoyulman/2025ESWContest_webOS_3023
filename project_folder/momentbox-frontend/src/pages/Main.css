@@ -26,7 +26,7 @@
   --shelf-left:    clamp(10%, 16vw, 22%);
   --calendar-left: clamp(22%, 24vw, 32%);
   --shelf-bottom:  -8px;                                /* + 위 / - 아래 */
-  --calendar-rise: clamp(120px, 22vh, 400px);         /* + 위 */
+  --calendar-rise: clamp(411px, 31vh, 456px);           /* + 위 */
   --shelf-width:    clamp(140px, 16vw, 280px);
   --calendar-width: clamp(56px, 6vw, 96px);
 
@@ -46,6 +46,10 @@
   --diary-left:  clamp(60%, 64vw, 72%);   /* 책상 위쪽으로 옮김 */
   --diary-bottom: 195px;                  /* 책상 위로 올리기 (값 ↑ = 더 위) */
   --diary-width: clamp(70px, 7vw, 120px);
+
+  --dashboard-left: clamp(600px, 57vw, 1500px);
+  --dashboard-bottom: 330px;                   /* 그대로 유지 */
+  --dashboard-width: clamp(120px, 12vw, 250px); /* 더 크게 */
 }
 
 /* ===== 전역 리셋 ===== */
@@ -194,6 +198,13 @@ html, body, #root {
   left: var(--diary-left);
   bottom: calc(100vh - var(--horizon) + var(--diary-bottom));
   width: var(--diary-width);
+  z-index: 3;
+}
+
+.decor-dashboard{
+  left: var(--dashboard-left);
+  bottom: calc(100vh - var(--horizon) + var(--dashboard-bottom));
+  width: var(--dashboard-width);
   z-index: 3;
 }
 

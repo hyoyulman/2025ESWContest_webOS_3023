@@ -83,13 +83,10 @@ export default function AppLayout() {
 
           {/* 캘린더 */}
           <NavLink to="/calendar" className={({isActive}) => cls(isActive)} onClick={closeSide}>
-            캘린더 / 일기 편집
+            캘린더 
           </NavLink>
 
-          {/* 임시: 일기 편집 */}
-          <NavLink to="/ai-diary-edit" className={({isActive}) => cls(isActive)} onClick={closeSide}>
-            일기편집(임시)
-          </NavLink>
+
 
           {/* ✅ 갤러리 */}
           <NavLink to="/gallery" className={({isActive}) => cls(isActive)} onClick={closeSide}>
@@ -103,7 +100,7 @@ export default function AppLayout() {
 
           {/* 게임 */}
           <NavLink to="/game" className={({isActive}) => cls(isActive)} onClick={closeSide}>
-            게임
+            퀘스트
           </NavLink>
 
           

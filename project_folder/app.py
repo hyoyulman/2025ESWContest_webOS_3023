@@ -132,9 +132,12 @@ def create_app():
             return {"ok": True, "mode": "split"}
 
     return app
-
+    
 if __name__ == '__main__':
     app = create_app()
     print(f"[SERVE_MODE] {SERVE_MODE}")
     print(f"[STATIC FOLDER] {getattr(app, 'static_folder', None)}")
+    #app.run(debug=True, host='0.0.0.0', port=5001, ssl_context=('cert.pem', 'key.pem'))
+    # WARNING: debug=True is a security risk in production. 
+    # It is recommended to set this to False and use proper logging.
     app.run(debug=True, host='0.0.0.0', port=5001, ssl_context=('cert.pem', 'key.pem'))

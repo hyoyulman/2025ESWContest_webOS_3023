@@ -12,6 +12,7 @@ import gamePng from '../assets/game.png';
 import desk from '../assets/desk.png';
 import diary from '../assets/diary.png';
 import cameraPng from '../assets/camera.png';
+import dashboardPng from '../assets/dashboard.png';
 
 // 공룡 의상 매핑
 import { outfitMapping } from '../constants/outfitMapping';
@@ -319,6 +320,18 @@ export default function Main() {
               style={{ cursor: 'pointer', width: '100%', display: 'block' }}
             />
             <span className="tooltip">일기 쓰기</span>
+          </div>
+
+          <div className="decor decor-dashboard tooltip-container">
+            <img
+              src={dashboardPng}
+              alt="대시보드"
+              onClick={() => navigate('/dashboard')}
+              tabIndex={0}
+              role="button"
+              style={{ cursor: 'pointer', width: '100%', display: 'block' }}
+            />
+            <span className="tooltip">대시보드</span>
           </div>
 
           {/* 공룡 (시선 전환) */}

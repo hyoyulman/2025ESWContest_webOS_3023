@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 from config import Config
 
 # === MongoDB 연결 (Flask extensions 안 쓰고 직접 연결) ===
-client = MongoClient(Config.MONGO_URI)  # 예: "mongodb://localhost:27017"
+client = MongoClient(Config.MONGO_URI)  
 db = client["momentbox"]
 
 # === GCS 클라이언트 ===

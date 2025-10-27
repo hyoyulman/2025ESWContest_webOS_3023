@@ -135,7 +135,7 @@ html, body { background: var(--bg); }
 }
 .event.설렘{ background:#cceeff; } /* 설렘 - Light Blue */
 .event.우울{ background:#d9f7d9; } /* 우울 - Light Green */
-.event.행복{ background:#ffe6cc; } /* 행복 - Light Orange */
+.event.행복{ background:#ffe6cc; } /* 걱정 - Light Orange */
 .event.피곤{ background:#ffd9d9; } /* 피곤 - Light Pink */
 .event.걱정{ background:#e6ccff; } /* 걱정 - Light Purple */
 
@@ -178,7 +178,7 @@ html, body { background: var(--bg); }
 .legend-item.video{ background:#f7d9b4; }
 .legend-item.설렘{ background:#cceeff; } /* 설렘 - Light Blue */
 .legend-item.우울{ background:#d9f7d9; } /* 우울 - Light Green */
-.legend-item.행복{ background:#ffe6cc; } /* 행복 - Light Orange */
+.legend-item.행복{ background:#ffe6cc; } /* 걱정 - Light Orange */
 .legend-item.피곤{ background:#ffd9d9; } /* 피곤 - Light Pink */
 .legend-item.걱정{ background:#e6ccff; } /* 걱정 - Light Purple */
 
@@ -277,7 +277,7 @@ html, body { background: var(--bg); }
 }
 .badge.설렘{ background:#cceeff; }
 .badge.우울{ background:#d9f7d9; }
-.badge.행복{ background:#ffe6cc; }
+.badge.행복{ background:#f7cda0; }
 .badge.피곤{ background:#ffd9d9; }
 .badge.걱정{ background:#e6ccff; }
 

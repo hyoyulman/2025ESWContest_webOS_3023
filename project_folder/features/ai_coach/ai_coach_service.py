@@ -208,8 +208,9 @@ def _process_photo_message_logic(user_id, diary_id):
     gcs_url = session['selected_photos'][index]
     print(f"Processing photo URL: {gcs_url}")
 
-    # GCS에서 이미지 다운로드
-    storage_client = storage.Client.from_service_account_json(Config.SERVICE_ACCOUNT_FILE)
+    # GCS에서 이미지 다운로드 승엽 수정
+    #storage_client = storage.Client.from_service_account_json(Config.SERVICE_ACCOUNT_FILE)
+    storage_client = storage.Client() # ◀◀◀ 이 코드로 수정
     bucket = storage_client.bucket(Config.GCS_BUCKET_NAME)
 
     blob_name_encoded = gcs_url.replace(f'https://storage.googleapis.com/{Config.GCS_BUCKET_NAME}/', '', 1)
@@ -350,10 +351,11 @@ def generate_diary_logic(user_id, diary_id):
     return {"title": diary_title, "summary_context": diary_text, "photos": photos}
 
 
-def text_to_speech_logic(text):
+def text_to_speech_logic(text): #승엽 수정
     """텍스트를 음성 데이터(MP3)로 변환합니다."""
-    credentials, project_id = google.auth.load_credentials_from_file(Config.SERVICE_ACCOUNT_FILE)
-    client = texttospeech.TextToSpeechClient(credentials=credentials)
+    #credentials, project_id = google.auth.load_credentials_from_file(Config.SERVICE_ACCOUNT_FILE)
+    #client = texttospeech.TextToSpeechClient(credentials=credentials)
+    client = texttospeech.TextToSpeechClient() # ◀◀◀ 이 코드로 수정
     synthesis_input = texttospeech.SynthesisInput(text=text)
     voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name="ko-KR-Standard-A")
     audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)

@@ -6,8 +6,16 @@ import datetime
 
 class MediaService:
     def __init__(self):
-        self.storage_client = storage.Client.from_service_account_json(Config.SERVICE_ACCOUNT_FILE)
-        self.bucket = self.storage_client.bucket(Config.GCS_BUCKET_NAME)
+        try:
+            # 이 코드는 자동으로 GOOGLE_APPLICATION_CREDENTIALS 환경 변수를 찾습니다.
+            self.storage_client = storage.Client() 
+            self.bucket = self.storage_client.bucket(Config.GCS_BUCKET_NAME)
+            
+        except Exception as e:
+            print(f"WARNING: GCS Client 초기화 실패. {e}")
+            print("cloud.json 파일 경로와 .env 설정을 확인하세요.")
+            self.storage_client = None
+            self.bucket = None
 
     def get_all_media(self, user_id):
         # 완료된 미디어만 사용자에게 보여줍니다.

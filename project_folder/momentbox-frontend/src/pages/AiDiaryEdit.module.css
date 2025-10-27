@@ -1,4 +1,12 @@
+
 /* ===== 리셋 ===== */
+
+@font-face {
+  font-family: 'Cafe24SsurroundAir';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24SsurroundAir.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 html, body { height: 100%; margin: 0; }
 body { overflow: hidden; }
 
@@ -23,6 +31,9 @@ body { overflow: hidden; }
   --home-outer: #d9dbe0;          /* 버튼 바탕(실버 톤) */
   --home-ring:  #000;             /* 버튼 링 */
 }
+
+
+
 
 /* ===== 레이아웃 변수 ===== */
 .wrap {
@@ -169,16 +180,16 @@ body { overflow: hidden; }
 }
 
 .title {
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 2.8rem;
+  font-family: 'Cafe24SsurroundAir', sans-serif;
+  font-size: 2.4rem;
   font-weight: normal; /* Handwriting fonts often look better without bold */
   color: #212529;
   margin: 0 0 10px;
 }
 
 .date {
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 1.8rem; /* Further increased font size */
+  font-family: 'Cafe24SsurroundAir', sans-serif;
+  font-size: 1.5rem; /* Further increased font size */
   color: #868e96;
   font-weight: 500;
   margin-bottom: 15px; /* Add margin to separate from categories */
@@ -207,8 +218,8 @@ body { overflow: hidden; }
 }
 
 .reader {
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 1.8rem; /* Further increased font size */
+  font-family: 'Cafe24SsurroundAir', sans-serif;
+  font-size: 1.5rem; /* Further increased font size */
   line-height: 2.4; /* Adjusted line height */
   color: #343a40;
   white-space: pre-wrap;
@@ -290,11 +301,11 @@ body { overflow: hidden; }
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
 }
 
-.categoryTag.운동 { background-color: #cceeff; color: #00678a; }
-.categoryTag.공부 { background-color: #d9f7d9; color: #0b6b0b; }
-.categoryTag.여행 { background-color: #ffe6cc; color: #8a4d00; }
+.categoryTag.설렘 { background-color: #cceeff; color: #00678a; }
+.categoryTag.우울 { background-color: #d9f7d9; color: #0b6b0b; }
+.categoryTag.행복 { background-color: #ffe6cc; color: #8a4d00; }
 .categoryTag.피곤 { background-color: #ffd9d9; color: #8a0000; }
-.categoryTag.행복 { background-color: #e6ccff; color: #5d008a; }
+.categoryTag.걱정 { background-color: #e6ccff; color: #5d008a; }
 
 
 .reader::-webkit-scrollbar { width: 8px; }
@@ -427,9 +438,8 @@ body { overflow: hidden; }
   border-radius: 0;
   padding: 10px 0;
   margin-bottom: 20px;
-  font-size: 2.2rem;
-  font-weight: bold;
-  font-family: 'Nanum Pen Script', cursive;
+  font-size: 2.0rem;
+  font-family: 'Cafe24SsurroundAir', sans-serif;
   box-sizing: border-box;
   background: transparent;
 }
@@ -449,8 +459,8 @@ body { overflow: hidden; }
 .contentInput {
   flex-grow: 1;
   resize: none; /* Disable textarea resizing */
-  font-family: 'Nanum Pen Script', cursive;
-  font-size: 1.8rem;
+  font-family: 'Cafe24SsurroundAir', sans-serif;
+  font-size: 1.5rem;
   line-height: 2.4;
   border: 1px solid #f1f3f5;
   border-radius: 8px;
@@ -563,7 +573,7 @@ body { overflow: hidden; }
 
 /* 버튼 내부 SVG 아이콘 색상 */
 .editButton svg {
-  stroke: #333;
+  stroke: #4b94c8;
 }
 
 .editButton:hover {
@@ -574,4 +584,24 @@ body { overflow: hidden; }
 .editButton:active {
   transform: translateY(0);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.savePopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(157, 157, 157, 0.7);
+  color: white;
+  padding: 25px 50px;
+  border-radius: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-in-out;
 }
