@@ -85,7 +85,7 @@ export default function AiChat() {
   
   const [messages, setMessages] = useState(initialMessages || []);
   const [currentPhoto, setCurrentPhoto] = useState(initialPhoto || null);
-  const [step, setStep] = useState("photoChat"); // Note: 'step' 상태가 현재 사용되지 않는 것 같습니다.
+  const [step] = useState("photoChat"); // Note: 'step' 상태가 현재 사용되지 않는 것 같습니다.
   
   // --- [ 녹음 상태 관리 ] ---
   const [isRecording, setIsRecording] = useState(false); // isListening -> isRecording

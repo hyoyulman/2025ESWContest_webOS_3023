@@ -64,7 +64,6 @@ export default function Game() {
   /** ==================== 퀘스트/포인트 상태 ==================== */
   const [quests, setQuests] = useState([]);
   const [questsLoading, setQuestsLoading] = useState(true);
-  const [userPoints, setUserPoints] = useState(1000);
 
   /** ==================== 보상 팝업 ==================== */
   const [showRewardPopup, setShowRewardPopup] = useState(false);
@@ -92,10 +91,10 @@ export default function Game() {
     document.body.style.overflow = "";
   }, []);
 
-  const closeStoreLightbox = () => {
+  const closeStoreLightbox = useCallback(() => {
     setStoreLightboxOpen(false);
     document.body.style.overflow = "";
-  };
+  }, []);
 
   useEffect(() => {
     const onKey = (e) =>
@@ -142,14 +141,15 @@ export default function Game() {
 
     try {
       // 백엔드에 클레임 요청
-      const { data } = await axiosInstance.post("/api/quests/claim", {
+      //const { data } = await axiosInstance.post("/api/quests/claim", {
+      await axiosInstance.post("/api/quests/claim", {
         questId,
       });
 
-      // 포인트 갱신
-      if (typeof data?.points === "number") {
-        setUserPoints(data.points);
-      }
+      // // 포인트 갱신
+      // if (typeof data?.points === "number") {
+      //   setUserPoints(data.points);
+      // }
 
       // 퀘스트 상태를 낙관적으로 갱신:
       // 제목, 보상 등은 그대로 두고 claimed/status만 바꾼다.

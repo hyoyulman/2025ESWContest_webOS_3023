@@ -6,19 +6,19 @@ import './Dashboard.css'; // Using the new modern CSS
 // --- Utility Functions ---
 const log = (label, data) => console.log(`[DEBUG] ${label}`, data);
 
-const formatTimestamp = (isoString) => {
-    if (!isoString) return 'N/A';
-    try {
-        const date = new Date(isoString);
-        if (isNaN(date.getTime())) return 'Invalid Date';
-        return new Intl.DateTimeFormat('ko-KR', {
-            year: 'numeric', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit',
-            hour12: false,
-            timeZone: 'Asia/Seoul'
-        }).format(date);
-    } catch (e) { return 'Invalid Date'; }
-};
+// const formatTimestamp = (isoString) => {
+//     if (!isoString) return 'N/A';
+//     try {
+//         const date = new Date(isoString);
+//         if (isNaN(date.getTime())) return 'Invalid Date';
+//         return new Intl.DateTimeFormat('ko-KR', {
+//             year: 'numeric', month: '2-digit', day: '2-digit',
+//             hour: '2-digit', minute: '2-digit',
+//             hour12: false,
+//             timeZone: 'Asia/Seoul'
+//         }).format(date);
+//     } catch (e) { return 'Invalid Date'; }
+// };
 
 const formatTime = (seconds) => {
     if (isNaN(seconds) || seconds < 0) seconds = 0;

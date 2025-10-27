@@ -5,7 +5,7 @@ import Gallery from "./Gallery";
 
 export default function GalleryPage() {
   const [items, setItems] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setErrorState] = useState(null);
 
   useEffect(() => {
     const fetchGalleryItems = async () => {
@@ -36,7 +36,7 @@ export default function GalleryPage() {
       } catch (error) {
         console.error("Error fetching gallery items:", error);
         // 사용자에게 에러를 알리는 UI를 추가할 수 있습니다.
-        if (items.length === 0) return <div style={{padding:"2rem"}}>완료된 사진 일기가 없습니다.</div>;
+        setErrorState("갤러리 항목을 불러오는 중 오류가 발생했습니다.");
       }
     };
 

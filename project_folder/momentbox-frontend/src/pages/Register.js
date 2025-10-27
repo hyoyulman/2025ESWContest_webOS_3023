@@ -133,7 +133,14 @@ function Register() {
 
         <footer className="auth-footer">
           <span>이미 계정이 있으신가요?</span>
-          <a className="link" onClick={() => navigate('/login')}>로그인</a>
+          {/* 👇 a 태그를 button 태그로 변경 */}
+          <button 
+            type="button" // form 제출 방지
+            className="link" // 기존 스타일 유지
+            onClick={() => navigate('/login')}
+          >
+            로그인
+          </button>
         </footer>
       </section>
     </main>

@@ -62,8 +62,6 @@ function AppContent() {
         return;
       }
       try {
-        // ★★★ axios를 axiosInstance로 변경 ★★★
-        // baseURL과 인증 헤더가 자동으로 적용됩니다.
         const res = await axiosInstance.get('/api/auth/profile');
         const refreshToken = localStorage.getItem('refreshToken');
         login({ email: res.data.email }, { accessToken, refreshToken });
@@ -76,8 +74,7 @@ function AppContent() {
       }
     };
     verifyUser();
-  // ★★★ 의존성 배열에 login, logout, setLoading 추가 ★★★
-  }, [setLoading]);
+  }, [login, logout, setLoading]);
 
   return (
     <div className="App">
