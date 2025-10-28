@@ -57,7 +57,7 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 
 ---
 
-## 5 프로젝트 구조
+## 5. 프로젝트 구조
 
 ```
 / Main_folder
@@ -98,7 +98,7 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 └─ TTS_inference_server.ipynb    # (AI) Colab XTTS 추론 서버 - 따로 구동
 ```
 ---
-## 6 AI(TTS) 개발 과정 요약
+## 6. AI(TTS) 개발 과정 요약
 
 1.[TTS](https://www.notion.so/TTS-25fece9a002981d7b6edcf21a12e8abd?pvs=21)
 
