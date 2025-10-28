@@ -46,6 +46,8 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
   </tr>
 </table>
 
+<img width="250" height="0" alt="Image" src="https://github.com/user-attachments/assets/cb5cee00-db54-42df-a2ae-45b00da2d1d1" />
+
 ---
 
 ## 2.  가전 주요 기능
