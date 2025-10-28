@@ -59,6 +59,32 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 | **AI 음성 대화** | 텍스트 대신 음성 입력(STT)을 지원하고, <br> AI의 응답을 원하는 음성(TTS)으로 들을 수 있습니다. |
 | **퀘스트 추천** | 메인화면 캐릭터가 주간 퀘스트를 브리핑하거나, <br> 일기 작성 후 맞춤형 퀘스트를 안내합니다. |
 
+<table align="center">
+  <tr> <td align="center">
+      <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/39e934e3-ce15-4ce4-81a2-bc78e29a3903" /><br>
+      <sub>AI 일기 작성 (카테고리 및 TTS 선택)</sub>
+    </td>
+    <td align="center">
+      <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/708779f4-9922-4e41-93f7-94c624f45e9e" /><br>
+      <sub>일기 관리 및 캘린더</sub>
+    </td>
+    <td align="center">
+      <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/3c948e2d-4ae9-4adc-b3c6-f435338d8703" /><br>
+      <sub>스마트홈 대시보드</sub>
+    </td>
+  </tr> <tr> <td align="center">
+      <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/4c5e2690-5814-49f9-951e-745eec0f6cae" /><br>
+      <sub>주간 퀘스트 UI</sub>
+    </td>
+    <td align="center">
+      <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/0500f85a-caa8-45af-a28a-625c8460edbe" /><br>
+      <sub>AI 음성 대화</sub>
+    </td>
+    <td align="center">
+      <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/a41f8d89-9f04-4dde-854b-8d033ca56f3f" /><br>
+      <sub>주간 퀘스트 추천</sub>
+    </td>
+  </tr> </table>
 ---
 
 ## 3. SW / HW 구성 및 개발환경
