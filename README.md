@@ -14,7 +14,7 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 풀스택 애플리케이션입니다.
 ---
 
-## 2.  주요 기능
+## 2.  가전 주요 기능
 
 | 기능 | 상세 내용 |
 | --- | --- |
@@ -27,104 +27,151 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 
 ---
 
-## ⚙️ SW 및 HW 구성
+## 3. SW / HW 구성 및 개발환경
 
 | 구분 | 내용 | 
 | --- | --- | 
 | **H/W** | Raspberry Pi 4 Model B |
 | **OS** | Raspberry Pi OS (Debian-based) |
 | **Backend** | Python, Flask, Flask-JWT-Extended |
-| **Frontend** | React, Node.js |
+| **Frontend** | React, Node.js (npm) |
 | **Database** | MongoDB Atlas |
-| **AI (LLM)** | Google Gemini Pro |
+| **AI (LLM)** | Google Gemini 2.5 Flash |
 | **AI (Speech)** | Google TTS, Colab XTTS (TTS) <br> SpeechRecognition, Pydub, FFmpeg (STT) |
 | **Storage** | Google Cloud Storage (GCS) |
+| **IDE** | Visual Studio Code |
 
 ---
 
-## 💻 개발 환경
-
-| 구분 | 도구 및 버전 |
-| --- | --- |
-| **IDE** | Visual Studio Code |
-| **Backend** | Python 3.9+, Flask, venv |
-| **Frontend** | Node.js (npm), React |
-| **VCS** | Git, GitHub |
-| **APIs** | Google Gemini, Google Cloud (GCS, TTS), LG ThinQ (시뮬레이션) |
-
-## ✨ 향후 발전 사항
-1.  **AI 일기 코치 api 모델 향상** :   
-    - 모델 튜닝을 통한 일기 작성 특화 api 개발
-
-2. **스마트홈 대시보드** :   
+## 4. 향후 발전 사항
+1. **스마트홈 대시보드** :   
       - LG ThinQ API와의 연계를 통한 실제 가전 데이터에 따른 대시보드 구성 
 
-3. **주간 가전 퀘스트 시스템** :    
-      - 가전에 따른 다채로운 퀘스트 컨텐츠 생성 및 추가적인 리워드 보상 구성
-
-4. **홈 스피커와의 연계** :   
+2. **홈 스피커와의 연계** :   
     - 스마트 스피커와 연계하여, 통합적인 기능(AI 비서 + 감정 교류 AI) 을 구성
 
-5. **AI 음성 대화 (TTS/STT)** :   
+3. **AI 음성 대화 (TTS/STT)** :   
       - 사용자가 원하는 목소리 TTS 모델 튜닝 및 배포
-6. **메인화면 캐릭터 갯수 확장** : 
+4. **메인화면 캐릭터 갯수 확장** : 
    - 사용자의 호기심을 이끌 수 있는 캐릭터 제작
 
 ---
 
-## 🏗️ 프로젝트 구조
+## 5 프로젝트 구조
 
 ```
-```bash
-/ (2025eswcontest_webos_3023)
-├── project_folder/               # 💡 메인 소스 코드
+/ Main_folder
+├── project_folder/               # 메인 코드 (프론트, 백엔드 폴더)
 │   ├── app.py                    # (백엔드) Flask 서버 실행, API 라우트(Blueprint) 설정
-│   ├── config.py                 # (백엔드) 환경변수 로드 및 AI 프롬프트 정의
+│   ├── config.py                 # (백엔드) 환경변수 로드 및 AI 프롬프트 정의 (개인정보)
 │   ├── extensions.py             # (백엔드) Flask 확장 (Mongo, Bcrypt, JWT)
 │   ├── features/                 # (백엔드) 기능별 API 모듈
-│   │   ├── ai_coach/             # - (API) Gemini, TTS/STT API
-│   │   ├── diaries/              # - (API) 일기(Diary) CRUD
-│   │   ├── lg_appliance/         # - (API) LG ThinQ 가전 제어 API
-│   │   ├── media/                # - (API) GCS 사진 업로드/조회 API
-│   │   ├── quests/               # - (API) 퀘스트 로직 API
-│   │   ├── shop/                 # - (API) 상점 아이템 API
-│   │   └── user/                 # - (API) 사용자 인증(JWT), 구매/착용 API
+│   │   ├── ai_coach/             # (API) 일기 대화, TTS/STT 음성 생성
+│   │   ├── diaries/              # (API) 일기 생성
+│   │   ├── lg_appliance/         # (API) 가전 제어 및 기본 데이터
+│   │   ├── media/                # (API) GCS 사진 업로드/조회
+│   │   ├── quests/               # (API) 가전 기반 퀘스트 생성
+│   │   ├── shop/                 # (API) 메인 캐릭터 상점 아이템
+│   │   └── user/                 # (API) 사용자 인증 - 로그인(JWT), 구매/착용 
 │   │
-│   ├── json/                     # (백엔드) 초기 데이터
-│   │   └── clothes_master.json   # - 상점 아이템 마스터 데이터
+│   ├── json/                     
+│   │   └── clothes_master.json   # 상점 아이템 데이터
 │   │
-│   ├── momentbox-frontend/       # 💡 React 프론트엔드
-│   │   ├── build/                # - (프론트) React 빌드 결과물 (Flask가 서빙)
-│   │   ├── public/               # - (프론트) index.html, static assets
-│   │   └── src/                  # - (프론트) React 컴포넌트 소스
-│   │       ├── api/              #   - axios (JWT 토큰 갱신 로직 포함)
-│   │       ├── assets/           #   - 사용된 이미지, 아이콘
-│   │       ├── constants/        #   - 캐릭터 의상 매핑
-│   │       ├── contexts/         #   - AuthContext (전역 로그인 상태)
-│   │       ├── layouts/          #   - AppLayout (공통 헤더/사이드바)
-│   │       └── pages/            #   - 각 페이지 컴포넌트
+│   ├── momentbox-frontend/       # React 프론트엔드
+│   │   ├── build/                # (프론트) React 빌드 파일 (npm으로 생성)
+│   │   ├── public/               # (프론트) index.html, static assets
+│   │   └── src/                  # (프론트) 각 기능 페이지 구성요소 정의
+│   │       ├── api/              #  axios (JWT 토큰 갱신 로직 포함)
+│   │       ├── assets/           #  페이지에 사용된 이미지, 아이콘
+│   │       ├── constants/        #  캐릭터 리워드 의상 매핑
+│   │       ├── contexts/         #  AuthContext (전역 로그인 상태 관리)
+│   │       ├── layouts/          #  AppLayout (공통 헤더/사이드바/햄버거 메뉴바)
+│   │       └── pages/            #  각 페이지 컴포넌트 (각 기능 구성에 대한 페이지)
 │   │
-│   ├── .env                      # (로컬) 환경 변수 (Git 무시됨)
-│   ├── cert.pem, key.pem         # (로컬) SSL 인증서
-│   ├── Cloud.json                # (로컬) Google Cloud 서비스 계정 키 (Git 무시됨)
-│   └── generate_certs.sh         # (로컬) SSL 인증서 생성 스크립트
+│   ├── .env                      # (로컬) 환경 변수 - 구성요소 직접 발급
+│   ├── cert.pem, key.pem         # (로컬) SSL 인증서 - sh로 발급
+│   ├── Cloud.json                # (로컬) Google Cloud 서비스 계정 키 - 직접 발급
+│   └── generate_certs.sh         # (로컬) SSL 인증서 생성 스크립트 - 로컬 서버 전용
 │
 ├─ README.md                     # (본 문서)
-├─ requirements.txt              # (백엔드) Python 라이브러리 목록
-└─ TTS_inference_server.ipynb    # (AI) Colab XTTS 추론 서버
+├─ requirements.txt              # (백엔드) Pip 라이브러리 목록
+└─ TTS_inference_server.ipynb    # (AI) Colab XTTS 추론 서버 - 따로 구동
 ```
 
-## 🚀 라즈베리파이 배포 가이드
+## 6. 라즈베리파이 배포 가이드
 
 라즈베리파이 OS(Debian 기반) 환경에서 Flask 서버를 구동하기 위한 절차입니다.                    
 위 글은 라즈베리파이4 기준으로 작성되었습니다.
+
+
+### 0. 기본 설정 및 환경 구성
+
+<details><summary>notion.md 파일 인용
+</summary>
+
+
+## 기본 설정 및 환경 구성
+
+
+1. 원격접속 후 
+```ssh-keygen -R ip주소``` /<br>
+2. extension, python 구성 (vscode module)
+  
+3. 마이크 권한설정 및 기본 마이크 gui확인
+<br>→a. gui 마이크 앱 설치
+    ```
+    sudo apt-get update
+    sudo apt-get install -y alsa-utils pulseaudio pavucontrol
+   ```
+    →b. lsusb로 마이크가 연결된 것을 확인 - lifecamm hd-3000/
+    
+
+---
+
+
+## 터치 디스플레이 및 회로 연결(스피커, 마이크)
+
+1. 펌웨어 업데이트
+```
+sudo apt-get update
+sudo apt-get install matchbox-keyboard
+```
+2. 라즈 부팅화면 → 우측 상단 → 스피커 모양
+→hdmi로 변경
+3. v4l2(마이크 전용)연결
+
+→스피커 테스트: 
+
+```jsx
+# 간단한 "Front Center" 음성 재생
+aplay /usr/share/sounds/alsa/Front_Center.wav
+```
+
+→마이크 테스트:
+
+```jsx
+arecord -l #마이크 장치 확인
+arecord -D plughw:3,0 -d 5 -f S16_LE -r 16000 test-mic.wav #plughw에 카드번호 삽입
+aplay test-mic.wav #최종 음성파일 듣기
+```
+
+→마이크 품질 조절
+
+```jsx
+alsamixer 
+F6눌러서 마이크 선택한 후 음량 조절 후 ESC
+```
+
+---
+</details>
+
 
 ### 1. 필수 패키지 설치
 
 ```
 sudo apt-get update 
 
-sudo apt-get install openssl ffmpeg git
+sudo apt-get install openssl ffmpeg git nodejs
 ```
 
 ### 2. 프로젝트 다운로드
@@ -142,6 +189,16 @@ python3 -m venv <가상환경_이름> 
 source <가상환경_이름>/bin/activate 
 
 pip install -r requirements.txt
+```
+
+### 3 - 1. 프론트엔드 모듈 구성 (가상환경 실행 후)
+```
+npm install # react 모듈 설치
+run npm build
+```
+### 3 - 2. axios (JWT 토큰 갱신 로직 구현)
+```
+npm install axios
 ```
 
 ### 4. 환경 변수 설정
@@ -199,4 +256,13 @@ ifconfig. #터미널에서 wlan0주소 확인
 
 https://<라즈베리파이_IP>:5001 #
 ```
+---
+
+## cf. 개발 시도 Vlog, Guideline 및 참고자료 모음
+### 1. MongoDB 계정 생성, URL 링크 방법
+-[몽고 DB 가이드라인 책자](https://tilnote.io/books/681169cb3c3f2fc7099cab49/68116a2b3c3f2fc7099cabe7)<br>
+-[온라인 몽고 DB 계정 생성 방법](https://dnl1029.tistory.com/23)
+
+### 2. 
+
 
