@@ -108,20 +108,61 @@ export default function AiChat() {
   const photoProgressIntervalRef = useRef(null);
   const diaryProgressIntervalRef = useRef(null);
   const initialTtsPlayed = useRef(false);
+  const audioContextRef = useRef(null); // 오디오 컨텍스트 참조
+
+  const initAudioContext = () => {
+    if (window.AudioContext || window.webkitAudioContext) {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContextRef.current.state === 'suspended') {
+        audioContextRef.current.resume().catch(e => console.error("AudioContext resume failed", e));
+      }
+    } else {
+      console.error('Web Audio API is not supported in this browser');
+    }
+  };
 
   async function playTTS(text, diaryId) {
+    if (!audioContextRef.current || audioContextRef.current.state !== 'running') {
+      console.warn("AudioContext is not running. Trying fallback to <audio> element. This may fail on iOS.");
+      try {
+        const response = await axios.post(
+          "/api/ai_coach/tts",
+          { text, diary_id: diaryId },
+          { responseType: "blob" }
+        );
+        const audioBlob = response.data;
+        const audioURL = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioURL);
+        await audio.play();
+      } catch (err) {
+        console.error("❌ TTS fallback playback failed. User interaction is likely required.", err);
+      }
+      return;
+    }
+
     try {
       const response = await axios.post(
         "/api/ai_coach/tts",
         { text, diary_id: diaryId },
-        { responseType: "blob" }
+        { responseType: "arraybuffer" }
       );
-      const audioBlob = response.data;
-      const audioURL = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioURL);
-      audio.play();
+
+      audioContextRef.current.decodeAudioData(
+        response.data,
+        (buffer) => {
+          const source = audioContextRef.current.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContextRef.current.destination);
+          source.start(0);
+        },
+        (err) => {
+          console.error("Error decoding audio data:", err);
+        }
+      );
     } catch (err) {
-      console.error("❌ TTS 실행 실패:", err);
+      console.error("❌ TTS request with Web Audio API failed:", err);
     }
   }
 
@@ -170,6 +211,8 @@ export default function AiChat() {
     }
     const lastInitialMessage = initialMessages?.[initialMessages.length - 1];
     if (lastInitialMessage && lastInitialMessage.role === 'ai') {
+      // The first TTS call might happen before user interaction.
+      // It will likely use the fallback method in playTTS.
       playTTS(lastInitialMessage.text, diaryId);
       initialTtsPlayed.current = true;
     }
@@ -208,6 +251,8 @@ export default function AiChat() {
 
   // --- [ '클릭/클릭' 녹음 핸들러 ] ---
   const handleToggleRecording = async () => {
+    initAudioContext(); // 오디오 컨텍스트 초기화
+
     if (isRecording) {
       // --- 녹음 중지 로직 ---
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
