@@ -13,37 +13,32 @@
 AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기를 생성해주는                                  
 풀스택 애플리케이션입니다.
 
-- **팀명** :
-- **공감저장소 - 중앙대학교**
+- **가전명**  :    
+**공감저장소(중앙대학교 전자전기공학부 및 기계공학부)** 
 
 - **팀원 소개** : 
 
 <table>
   <tr align="center">
     <td>
-      <p>(사진을 여기에 넣어주세요)</p>
       <strong>박소연</strong><br/>
-      <small>AI / PM</small>
+      <small>Fronted</small>
     </td>
     <td>
-      <p>(사진을 여기에 넣어주세요)</p>
       <strong>이예진</strong><br/>
-      <small>Frontend</small>
+      <small>Frontend / AI</small>
     </td>
     <td>
-      <p>(사진을 여기에 넣어주세요)</p>
       <strong>배준형</strong><br/>
       <small>Backend</small>
     </td>
     <td>
-      <p>(사진을 여기에 넣어주세요)</p>
       <strong>박승재</strong><br/>
       <small>Hardware / IoT</small>
     </td>
     <td>
-      <p>(사진을 여기에 넣어주세요)</p>
       <strong>여승엽</strong><br/>
-      <small>Data / Server</small>
+      <small>Server / Team Leader</small>
     </td>
   </tr>
 </table>
