@@ -59,7 +59,7 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 | **AI 음성 대화** | 텍스트 대신 음성 입력(STT)을 지원하고, <br> AI의 응답을 원하는 음성(TTS)으로 들을 수 있습니다. |
 | **퀘스트 추천** | 메인화면 캐릭터가 주간 퀘스트를 브리핑하거나, <br> 일기 작성 후 맞춤형 퀘스트를 안내합니다. |
 
-<table align="center">
+<table align="left">
   <tr> <td align="center">
       <img width="250" height="" alt="Image" src="https://github.com/user-attachments/assets/39e934e3-ce15-4ce4-81a2-bc78e29a3903" /><br>
       <sub>AI 일기 작성 (카테고리 및 TTS 선택)</sub>
