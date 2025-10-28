@@ -6,7 +6,6 @@ shop_bp = Blueprint('shop', __name__)
 @shop_bp.route('/shop', methods=['GET'])
 def get_shop_items():
     items = shop_service.get_all_shop_items()
-    # MongoDB _id를 문자열로 변환
     for item in items:
         item['_id'] = str(item['_id'])
     return jsonify(items)

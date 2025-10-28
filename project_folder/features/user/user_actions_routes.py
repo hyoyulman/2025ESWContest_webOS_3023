@@ -1,12 +1,11 @@
 from flask import Blueprint, request, jsonify
 from bson.json_util import dumps
-from .user_service import UserService # Import the service
-from flask_jwt_extended import jwt_required # Assuming this is needed for other routes later
+from .user_service import UserService 
+from flask_jwt_extended import jwt_required 
 
 user_actions_bp = Blueprint('user_actions', __name__)
-user_service = UserService() # Instantiate the service
+user_service = UserService() 
 
-# New: Route for purchasing an item
 @user_actions_bp.route('/users/<user_id>/closet/purchase', methods=['POST'])
 @jwt_required()
 def purchase_item_route(user_id):
@@ -22,7 +21,7 @@ def purchase_item_route(user_id):
     except Exception as e:
         return jsonify({"error": "An unexpected error occurred during purchase"}), 500
 
-# New: Route for equipping an item
+
 @user_actions_bp.route('/users/<user_id>/closet/equip', methods=['POST'])
 @jwt_required()
 def equip_item_route(user_id):

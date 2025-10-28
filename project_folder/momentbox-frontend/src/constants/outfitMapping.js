@@ -1,6 +1,3 @@
-// src/constants/outfitMapping.js
-
-// 이미지 import
 import dinoLeft from "../assets/dinoLeft.png";
 import dinoRight from "../assets/dinoRight.png";
 
@@ -16,14 +13,13 @@ import uni_l from "../assets/uni_l.png";
 import uni_r from "../assets/uni_r.png";
 
 export const outfitMapping = {
-  // 기본(아무 것도 안 입었을 때)
   default: {
     left: dinoLeft,
     right: dinoRight,
     style: {
       left: {
-        width: 320,   // px
-        y: 20,        // px down
+        width: 320,   
+        y: 20,       
         scale: 0.85,
       },
       right: {
@@ -34,20 +30,19 @@ export const outfitMapping = {
     },
   },
 
-  // 요리사 복장: DB에서 예: top: "cook_c"
   cook_c: {
     left: cook_l,
     right: cook_r,
     style: {
       left: {
         width: 150,
-        y: 20,
-        scale: 0.9,   // 필요하면 조절
+        y: 50,
+        scale: 1.1,  
       },
       right: {
         width: 65,
-        y: 25,
-        scale: 2.05,
+        y: 50,
+        scale: 2.4,
       },
     },
   },
@@ -59,13 +54,13 @@ export const outfitMapping = {
     style: {
       left: {
         width: 140,
-        y: 16,
-        scale: 0.88,
+        y: 60,
+        scale: 1.1,
       },
       right: {
         width: 62,
-        y: 20,
-        scale: 2.0,
+        y: 55,
+        scale: 2.4,
       },
     },
   },
@@ -77,18 +72,18 @@ export const outfitMapping = {
     style: {
       left: {
         width: 140,
-        y: 22,
-        scale: 0.92,
+        y: 50,
+        scale: 1.1,
       },
       right: {
         width: 63,
-        y: 26,
-        scale: 2.05,
+        y: 50,
+        scale: 2.35,
       },
     },
   },
 
-  // 정장 복장 (suit_c)
+  // 정장 복장 
 
   suit_c: {
     left: suit_l,
@@ -96,13 +91,13 @@ export const outfitMapping = {
     style: {
       left: {
         width: 140,
-        y: 20,
-        scale: 1.0,
+        y: 60,
+        scale: 1.1,
       },
       right: {
         width: 140,
-        y: 22,
-        scale: 1.0,
+        y: 60,
+        scale: 1.1,
       },
     },
   },
@@ -114,13 +109,13 @@ export const outfitMapping = {
     style: {
       left: {
         width: 150,
-        y: 19,
-        scale: 0.94,
+        y: 60,
+        scale: 1.1,
       },
       right: {
         width: 65,
-        y: 24,
-        scale: 2.08,
+        y: 55,
+        scale: 2.5,
       },
     },
   },

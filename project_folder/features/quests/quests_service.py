@@ -49,18 +49,10 @@ class QuestsService:
             
         reward = quest_master.get('reward', 0)
         
-        # 3. 보상 수령 처리: user_quests 상태 업데이트 및 포인트 지급
-        # 퀘스트 상태를 claimed=True로 업데이트
         self.user_quests.update_one(
             {"_id": user_quest['_id']},
             {"$set": {"claimed": True, "claimed_at": datetime.datetime.now(datetime.timezone.utc)}}
         )
-        # 사용자 포인트 증가
-        mongo.db.users.update_one(
-            {"_id": user_object_id},
-            {"$inc": {"points": reward}}
-        )
-        # 4. 업데이트된 사용자 포인트 반환
         updated_user = mongo.db.users.find_one({"_id": user_object_id})
         return updated_user.get('points', 0)
     
@@ -76,7 +68,6 @@ class QuestsService:
         for quest in weekly_quests:
             logging.info(f"  Quest ID: {quest.get('_id')}, Stored Start Date: {quest.get('start_date')!r}")
 
-        # If the number of quests found is not 10, re-initialize them.
         if len(weekly_quests) != 10:
             logging.info(f"Expected 10 weekly quests but found {len(weekly_quests)}. Re-initializing weekly quests.")
             self.quests.delete_many({"type": QUEST_TYPE_WEEKLY, "start_date": start_of_week})
@@ -104,13 +95,11 @@ class QuestsService:
         start_of_week = now - datetime.timedelta(days=now.weekday())
         start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        # Clean up old user_quest documents
         self.user_quests.delete_many({
             "user_id": user_id,
             "assigned_date": {"$lt": start_of_week}
         })
 
-        # Reset weekly accumulated duration for the user's devices
         mongo.db.user_LG_devices.update_many(
             {"userId": str(user_id)},
             {"$set": {"weekly_duration_sec": 0}}
@@ -154,8 +143,6 @@ class QuestsService:
                     
                     user_quest['progress'] = min(progress_hours, quest['goal'])
 
-                    # TODO: Consider using atomic operations ($inc, $set) for critical updates
-                    # to prevent race conditions in a high-concurrency environment.
                     if progress_hours >= quest['goal']:
                         user_quest['status'] = 'completed'
                         self.user_quests.update_one(
@@ -197,8 +184,6 @@ class QuestsService:
             if user_quest and user_quest['status'] == 'in_progress':
                 new_progress = user_quest['progress'] + 1
                 update_data = {"progress": new_progress}
-                # TODO: Consider using atomic operations ($inc, $set) for critical updates
-                # to prevent race conditions in a high-concurrency environment.
                 if new_progress >= quest['goal']:
                     update_data["status"] = "completed"
                     update_data["completed_at"] = datetime.datetime.now(datetime.timezone.utc)
@@ -215,7 +200,6 @@ class QuestsService:
         start_of_week = now - datetime.timedelta(days=now.weekday())
         start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        # Find all active quests for the current week related to the device
         quests_for_device = self.quests.find({
             "related_appliance": self.appliance_type_map.get(mongo.db.user_LG_devices.find_one({"_id": device_name, "userId": user_id}).get("type")),
             "type": QUEST_TYPE_WEEKLY,
@@ -225,10 +209,9 @@ class QuestsService:
         for quest in quests_for_device:
             user_quest = self.user_quests.find_one({"user_id": user_object_id, "quest_id": quest['_id']})
             if not user_quest or user_quest['status'] != 'in_progress':
-                continue # Skip if no user_quest or already completed
+                continue 
 
             if quest.get("goal_type") == GOAL_TYPE_COUNT:
-                # Increment count-based quest progress
                 new_progress = user_quest['progress'] + 1
                 update_data = {"progress": new_progress}
                 if new_progress >= quest['goal']:
@@ -239,7 +222,6 @@ class QuestsService:
                 logging.info(f"User {user_id} progressed in count-based quest: {quest['title']}")
 
             elif quest.get("goal_type") == GOAL_TYPE_DURATION_HOURS:
-                # Recalculate duration-based quest progress
                 reverse_appliance_map = {v: k for k, v in self.appliance_type_map.items()}
                 device_type = reverse_appliance_map.get(quest["related_appliance"])
                 if device_type:

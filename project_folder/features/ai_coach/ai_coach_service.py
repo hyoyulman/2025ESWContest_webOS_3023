@@ -13,18 +13,14 @@ from pydub.exceptions import CouldntDecodeError
 from bson.objectid import ObjectId
 from google.cloud import storage
 import google.auth
-from urllib.parse import unquote # unquote 함수 임포트
-import requests # ◀◀◀ 1. Colab 연동을 위해 requests 임포트
+from urllib.parse import unquote 
+import requests 
 
-# 내부 서비스 호출을 위해 import
 from features.lg_appliance import lg_appliance_service
 from config import Config
 from extensions import mongo
 
-# ✅✅✅ 최종 버전 확인용 코드 ✅✅✅
-SERVICE_VERSION = "V3_FINAL_DEBUG"
-# ✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
-
+SERVICE_VERSION = "Final"
 
 def append_diary_conversation(diary_id, role, content, photo_filename=None):
     """특정 일기에 대화 메시지를 추가"""
@@ -35,7 +31,7 @@ def append_diary_conversation(diary_id, role, content, photo_filename=None):
                 "conversations": {
                     "role": role,
                     "content": content,
-                    "photo_url": photo_filename,   # ✅ 필드 이름 photo_url로 변경
+                    "photo_url": photo_filename,  
                     "created_at": datetime.utcnow()
                 }
             },
@@ -43,14 +39,11 @@ def append_diary_conversation(diary_id, role, content, photo_filename=None):
         }
     )
 
-# --- 세션 관리 헬퍼 함수 ---
-
 def _get_user_session(user_id):
     """DB에서 사용자 세션 정보를 가져옵니다."""
     user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"ai_session": 1})
     if user and "ai_session" in user:
         return user["ai_session"]
-    # 세션 정보가 없으면 기본값을 반환합니다.
     return {
         "history": [],
         "selected_photos": [],
@@ -68,32 +61,26 @@ def _save_user_session(user_id, session_data):
 
         for i, item in enumerate(history_to_process):
             print(f"[DEBUG {SERVICE_VERSION}] History item #{i}의 타입: {type(item)}")
-            # Check if it behaves like a Content object (has role and parts)
             if hasattr(item, 'role') and hasattr(item, 'parts'):
                 serializable_item = {"role": item.role, "parts": []}
                 for part in item.parts:
-                    # Check if it behaves like a Part object
-                    if hasattr(part, 'text'): # It's a TextPart
+                    if hasattr(part, 'text'): 
                         serializable_item["parts"].append({"text": part.text})
-                    elif hasattr(part, 'blob'): # It's a BlobPart
-                        # Assuming blob has a to_dict() or similar for serialization
+                    elif hasattr(part, 'blob'): 
                         if hasattr(part.blob, 'to_dict'):
                             serializable_item["parts"].append({"blob": part.blob.to_dict()})
                         else:
-                            # Fallback if blob itself is not directly serializable
                             serializable_item["parts"].append({"blob": str(part.blob)})
                     else:
-                        # Fallback for other Part types or if it's not a recognized Part
                         if hasattr(part, 'to_dict'):
                             serializable_item["parts"].append(part.to_dict())
                         else:
                             serializable_item["parts"].append(str(part))
                 serializable_history.append(serializable_item)
-            elif isinstance(item, dict): # If it's already a dictionary, ensure its parts are also serialized
+            elif isinstance(item, dict): 
                 if 'parts' in item and isinstance(item['parts'], list):
                     new_parts = []
                     for part in item['parts']:
-                        # Check if it behaves like a Part object
                         if hasattr(part, 'text'):
                             new_parts.append({"text": part.text})
                         elif hasattr(part, 'blob'):
@@ -105,7 +92,7 @@ def _save_user_session(user_id, session_data):
                             if hasattr(part, 'to_dict'):
                                 new_parts.append(part.to_dict())
                             else:
-                                new_parts.append(part) # Keep as is if not a special type
+                                new_parts.append(part) 
                     item['parts'] = new_parts
                 serializable_history.append(item)
             else:
@@ -123,9 +110,6 @@ def _save_user_session(user_id, session_data):
     except Exception as e:
         print(f"--- [DEBUG {SERVICE_VERSION}] _save_user_session 에서 오류 발생: {e} ---")
         raise e
-
-
-# --- 핵심 서비스 함수 ---
 
 def initialize_general_chat_session(user_id):
     """일반 대화 세션을 초기화합니다. (가전 브리핑 비활성화)"""
@@ -148,28 +132,13 @@ def initialize_general_chat_session(user_id):
     
     return "일기 코치와의 대화를 시작합니다."
 
-def get_briefing_text():
-    """가전 브리핑 텍스트를 생성합니다."""
-    try:
-        devices = lg_appliance_service.get_all_statuses()
-        briefing_model = genai.GenerativeModel(Config.GEMINI_MODEL)
-        briefing_response = briefing_model.generate_content(f"{Config.BRIEFING_PROMPT}\n\n데이터: {devices}")
-        return briefing_response.text.strip()
-    except Exception as e:
-        print(f"[DEBUG] Gemini API call failed: {e}")
-        traceback.print_exc()
-        return f"가전 데이터를 불러오는 데 실패했습니다: {e}"
-
-# --- 사진 기반 대화 시작 ---
 def start_photo_session_logic(user_id, diary_id, photo_url_list):
     """
     선택된 사진 URL 배열을 diary에 추가하고 첫 번째 사진 대화를 시작합니다.
     """
     if not photo_url_list:
         raise ValueError("선택된 사진이 없습니다.")
-
     photo_objects = [{'filename': url.split('/')[-1], 'url': url} for url in photo_url_list]
-    
     mongo.db.diaries.update_one(
         {"_id": ObjectId(diary_id)},
         {"$addToSet": {"photos": {"$each": photo_objects}}}
@@ -177,7 +146,7 @@ def start_photo_session_logic(user_id, diary_id, photo_url_list):
 
     session = {
         "history": [],
-        "selected_photos": photo_url_list, # Keep as full URLs
+        "selected_photos": photo_url_list, 
         "current_photo_index": 0,
         "current_mode": "photo_session"
     }
@@ -195,7 +164,6 @@ def _process_photo_message_logic(user_id, diary_id):
     gcs_url = session['selected_photos'][index]
     print(f"Processing photo URL: {gcs_url}")
 
-    # (이전 수정 사항 유지)
     storage_client = storage.Client() 
     bucket = storage_client.bucket(Config.GCS_BUCKET_NAME)
 
@@ -213,7 +181,6 @@ def _process_photo_message_logic(user_id, diary_id):
         prompt = f"시스템 메시지: 사용자가 '{blob_name_decoded.split('/')[-1]}' 사진에 대해 대화를 시도했지만, 파일을 클라우드 저장소에서 찾을 수 없었습니다. 이 사진을 불러올 수 없다고 사용자에게 알리고, 다음 사진으로 넘어가자고 제안하세요."
         gcs_url = None
 
-    # Gemini 모델 호출
     print("Calling Gemini API...")
     model = genai.GenerativeModel(Config.GEMINI_MODEL)
     chat = model.start_chat(history=[])
@@ -328,8 +295,6 @@ def generate_diary_logic(user_id, diary_id):
 
     return {"title": diary_title, "summary_context": diary_text, "photos": photos}
 
-# ----------------- [ ◀◀◀ 3. TTS 로직 전면 수정 ] -----------------
-
 def _google_tts_logic(text):
     """[Helper] 텍스트를 Google 기본 음성(MP3)으로 변환합니다."""
     print("[TTS LOGIC] Using Google Default TTS (MP3)")
@@ -339,27 +304,23 @@ def _google_tts_logic(text):
         voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name="ko-KR-Standard-A")
         audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
         response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
-        
-        # (오디오 데이터, 마임타입) 튜플 반환
+
         return response.audio_content, 'audio/mpeg'
     except Exception as e:
         print(f"!!! Google TTS Error: {e}")
-        raise e # 오류를 상위로 다시 보냄
+        raise e 
 
 def _colab_tts_logic(text, speaker):
     """[Helper] 텍스트를 Colab XTTS 서버(WAV)로 보냅니다."""
     print(f"[TTS LOGIC] Attempting Colab TTS (WAV) for speaker: {speaker}")
     
-    # config.py에 COLAB_TTS_URL이 정의되어 있어야 합니다.
     if not hasattr(Config, 'COLAB_TTS_URL') or not Config.COLAB_TTS_URL:
         raise ValueError("COLAB_TTS_URL이 config.py에 설정되지 않았습니다.")
 
     payload = {
         "text": text,
-        "speaker": speaker  # "soyeon" 또는 "yejin"이 전달됨
+        "speaker": speaker  
     }
-    
-    # Colab 서버는 느릴 수 있으므로 timeout을 넉넉하게 60초로 설정
     response = requests.post(
         Config.COLAB_TTS_URL,
         json=payload,
@@ -368,14 +329,13 @@ def _colab_tts_logic(text, speaker):
 
     if response.status_code == 200:
         print(f"[TTS LOGIC] Colab TTS for {speaker} successful.")
-        # (오디오 데이터, 마임타입) 튜플 반환
         return response.content, 'audio/wav' 
     else:
         err_msg = "Unknown error"
         try:
             err_msg = response.json().get("error", "Colab TTS 서버에서 알 수 없는 오류 발생")
         except requests.exceptions.JSONDecodeError:
-            err_msg = response.text # JSON이 아닌 응답
+            err_msg = response.text
         raise Exception(f"Colab TTS 서버 응답 오류 (Code {response.status_code}): {err_msg}")
 
 
@@ -385,36 +345,25 @@ def text_to_speech_logic(text, diary_id):
     Colab 실패 시 Google 기본 음성으로 자동 대체(fallback)합니다.
     """
     try:
-        # 1. diary_id로 speaker 설정 조회 (없으면 'default')
         diary = mongo.db.diaries.find_one({"_id": ObjectId(diary_id)}, {"speaker": 1})
         speaker = diary.get("speaker", "default") if diary else "default"
-
-        # 2. 'default'이거나 'speaker' 필드가 없으면 Google TTS 호출
+        
         if speaker == "default":
             return _google_tts_logic(text)
         
-        # 3. 'default'가 아니면 (예: "soyeon", "yejin") Colab TTS 시도
         else:
             try:
-                # 3-1. Colab 시도
                 return _colab_tts_logic(text, speaker)
             except Exception as colab_error:
-                # 3-2. Colab 실패! (중요: fallback)
                 print(f"--- [TTS FALLBACK] ---")
                 print(f"Colab TTS 호출 실패 (speaker: {speaker}). Google 기본 음성으로 대체합니다.")
                 print(f"Colab Error: {colab_error}")
                 print(f"------------------------")
-                # Colab 실패 시 Google 기본 음성으로 대체 실행
                 return _google_tts_logic(text) 
 
     except Exception as e:
-        # 4. (Fallback 예외) Google TTS 마저 실패한 경우
         print(f"!!! [TTS FATAL ERROR] Google TTS마저 실패했습니다: {e}")
-        # 이 경우에도 Google TTS를 한 번 더 시도 (오류 로깅을 위해)
         return _google_tts_logic(text)
-
-
-############################################################################################
 
 def speech_to_text_from_file(audio_file):
     """
@@ -445,9 +394,7 @@ def speech_to_text_from_file(audio_file):
         print(f"[UNKNOWN AUDIO ERROR] 오디오 처리 중 알 수 없는 오류 발생: {e}")
         raise ValueError(f"오디오 처리 중 알 수 없는 오류 발생: {e}")
 
-
-# ----------------- [ ◀◀◀ 2. `create_diary_session` 수정 ] -----------------
-def create_diary_session(user_id, categories, speaker): # ✅ speaker 파라미터 추가
+def create_diary_session(user_id, categories, speaker):
     """
     새로운 일기 세션을 생성하고 선택된 해시태그와 스피커를 DB에 저장합니다.
     """
@@ -456,7 +403,7 @@ def create_diary_session(user_id, categories, speaker): # ✅ speaker 파라미�
         "categories": categories,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),
-        "speaker": speaker,  # ✅ 스피커(목소리) 설정 저장
+        "speaker": speaker,  
         "conversations": [],
         "photos": [],
         "title": "",

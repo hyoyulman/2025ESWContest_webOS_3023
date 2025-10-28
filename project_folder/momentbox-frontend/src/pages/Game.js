@@ -1,25 +1,23 @@
-// Game.js
 import React, { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import "./Game.css";
-import Store from "./Store"; // 상점 라이트박스 컴포넌트
-import axiosInstance from "../api/axiosInstance"; // axiosInstance import 추가
+import Store from "./Store"; 
+import axiosInstance from "../api/axiosInstance"; 
 
-/* ===== 정적 이미지 import ===== */
+
 import wallImg from "../assets/wall.jpg";
 import store from "../assets/posters/store.png";
 
-/* ===== 공통: Mongo ObjectId/문자열 호환 ===== */
+
 const getId = (q) => String(q?._id?.$oid ?? q?._id ?? "");
 
-// --- 퀘스트 아이콘 매핑 함수 ---
 const getQuestIcon = (questTitle) => {
   const lowerTitle = questTitle.toLowerCase();
   if (lowerTitle.includes('세탁')) return 'local_laundry_service';
   if (lowerTitle.includes('건조')) return 'dry_cleaning';
   if (lowerTitle.includes('요리')) return 'kitchen';
   if (lowerTitle.includes('청소')) return 'cleaning_services';
-  if (lowerTitle.includes('냉장')) return 'kitchen'; // Refrigerator icon
+  if (lowerTitle.includes('냉장')) return 'kitchen'; 
   if (lowerTitle.includes('공기')) return 'air';
   if (lowerTitle.includes('운동')) return 'fitness_center';
   if (lowerTitle.includes('독서')) return 'book';
@@ -36,7 +34,7 @@ const getQuestIcon = (questTitle) => {
   if (lowerTitle.includes('재미') || lowerTitle.includes('놀이')) return 'celebration'; // Fun icon
   if (lowerTitle.includes('안마의자')) return 'chair'; // Specific icon for massage chair
   if (lowerTitle.includes('에어로타워')) return 'wind_power'; // Specific icon for aero tower
-  return 'help_outline'; // 기본 아이콘
+  return 'help_outline'; 
 };
 
 const RewardPopup = ({ message, onClose }) => (
@@ -140,19 +138,10 @@ export default function Game() {
     }
 
     try {
-      // 백엔드에 클레임 요청
-      //const { data } = await axiosInstance.post("/api/quests/claim", {
       await axiosInstance.post("/api/quests/claim", {
         questId,
       });
 
-      // // 포인트 갱신
-      // if (typeof data?.points === "number") {
-      //   setUserPoints(data.points);
-      // }
-
-      // 퀘스트 상태를 낙관적으로 갱신:
-      // 제목, 보상 등은 그대로 두고 claimed/status만 바꾼다.
       setQuests((prev) =>
         prev.map((q) =>
           getId(q) === String(questId)
@@ -181,7 +170,7 @@ export default function Game() {
   };
 
   /** ==================== 포스터 메타 ==================== */
-  const posters = [{ title: "상점", src: store, cls: "poster--9" }];
+  const posters = [{ title: "STORE", src: store, cls: "poster--9" }];
 
   return (
     <div className="game-wrap" role="region" aria-label="Game scene">

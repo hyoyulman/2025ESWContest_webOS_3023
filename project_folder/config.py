@@ -2,34 +2,28 @@ import os
 import json
 from dotenv import load_dotenv
 
-# .env 파일에서 환경 변수를 로드합니다.
 load_dotenv()
 
 class Config:
     # --- 기본 설정 ---
-    # .env 파일에서 SECRET_KEY를 불러옵니다. 없으면 기본값을 사용합니다.
     SECRET_KEY = os.getenv('SECRET_KEY', 'a-default-fallback-secret-key')
     
     COLAB_TTS_URL = os.getenv("COLAB_TTS_URL")
     
     # --- 데이터베이스 설정 ---
-    # .env 파일에서 MONGO_URI를 불러옵니다.
     MONGO_URI = os.getenv('MONGO_URI')
     MONGO_TZ_AWARE = True
 
     # --- JWT 설정 ---
-    # .env 파일에서 JWT_SECRET_KEY를 불러옵니다.
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'a-default-fallback-jwt-key')
 
     # --- Google API 설정 ---
-    # .env 파일에서 GEMINI_API_KEY를 불러옵니다.
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     GEMINI_MODEL = "models/gemini-2.5-flash"
 
     # --- GCS 설정 ---
     GCS_BUCKET_NAME = "momentbox"
 
-    # --- 프롬프트 설정 (기존과 동일) ---
     SYSTEM_PROMPT = """
         너는 ‘일기 코치’다.
         사용자가 오늘 하루 있었던 일을 편하게 털어놓을 수 있도록 자연스럽게 질문을 던진다.

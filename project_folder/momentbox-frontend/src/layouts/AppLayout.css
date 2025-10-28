@@ -36,7 +36,6 @@ html, body, #root { margin: 0; padding: 0; }
   line-height:1;              /* 폰트 자체 여백 최소화 */
 }
 
-/* === (변경) 브랜드 텍스트 스타일 개선 === */
 .appbar__brand a{
   text-decoration: none;
   display: inline-block;

@@ -142,13 +142,10 @@ export default function Store({ onClose }) {
     fetchUserData();
   }, [user, authTokens]);
 
-  // 모달(라이트박스) 닫는 공통 처리:
-  // 1) 시각적으로 사라지게 (isClosing=true → overlay에 fadeOut 클래스 적용)
-  // 2) 2초 뒤 실제 onClose() 호출해서 언마운트
   const closeWithDelay = () => {
-    setIsClosing(true); // overlay에 fadeOut 클래스 적용 -> 라이트박스 안 보이게
+    setIsClosing(true); 
     setTimeout(() => {
-      onClose(); // 실제 언마운트
+      onClose(); 
     }, 2000);
   };
 

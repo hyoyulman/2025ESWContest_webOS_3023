@@ -1,18 +1,15 @@
-/* AiChat.module.css */
-
-/* ===== 기존 레이아웃 스타일 (AiDiary.module.css에서 복사) ===== */
 .wrap {
   --wall: #bfe0f2;
   --desk: #e9c9a3;
   --horizon: 68vh;
   --scene-max: 1280px;
-  --monitor-w: clamp(900px, 90vw, 1800px);
-  --lamp-w: clamp(240px, 25vw, 400px);
-  --book2-w: clamp(220px, 20vw, 340px);
-  --book3-w: clamp(800px, 70vw, 1300px);
-  --keyboard-w: clamp(280px, 26vw, 420px);
-  --tablet-w: clamp(280px, 25vw, 420px);
-  --memo-w: clamp(80px, 8vw, 110px);
+
+  --monitor-w: clamp(1400px, 130vw, 3100px);  /* 기존보다 더 큼 */
+  --monitor-left: 50%;   /* 기본값: 화면 중앙 (좌우 이동 조정) */
+  --monitor-bottom: -14%; /* 기본값: 살짝 위로 올림 (상하 조정) */
+  --keyboard-w: clamp(300px, 30vw, 450px);
+  --tablet-w: clamp(350px, 45vw, 450px);
+
   --border-color: #2b2b2b;
   --border-thick: 4px;
 }
@@ -53,64 +50,41 @@
   z-index: 5;
 }
 
+/* ===== 모니터 오브젝트 ===== */
 .monitor {
   width: var(--monitor-w);
-  left: 53%;
-  bottom: -8%;
+  max-width: none; /* 전역 img 규칙 무시 */
+  left: var(--monitor-left);
+  bottom: var(--monitor-bottom);
   transform: translateX(-50%);
   z-index: 10;
+  transition: all 0.3s ease; /* 부드럽게 이동 */
 }
 
-.lamp {
-  width: var(--lamp-w);
-  right: -15%;
-  bottom: 5%;
-  z-index: 11;
-}
-
-.book2 {
-  width: var(--book2-w);
-  left: -12%;
-  bottom: 10%;
-  z-index: 9;
-}
-
-.book3 {
-  width: var(--book3-w);
-  left: -45%;
-  bottom: -40%;
-  z-index: 9;
-}
+/* 불필요 오브젝트 제거 (.lamp, .book2, .book3, .memo) */
 
 .keyboard {
   width: var(--keyboard-w);
-  left: 50%;
-  bottom: -10%;
+  left: 47%;
+  bottom: -13%;
   transform: translateX(-50%);
   z-index: 12;
 }
 
 .tablet {
   width: var(--tablet-w);
-  left: 80%;
-  bottom: -13%;
+  left: 82%;
+  bottom: -10%;
   transform: translateX(-50%);
   z-index: 12;
 }
 
-.memo {
-  width: var(--memo-w);
-  left: 5%;
-  top: 12%;
-  z-index: 15;
-}
-
 .screen {
   position: absolute;
-  top: 12%;
-  left: 15%;
-  width: 75%;
-  height: 65%;
+  top: 3%;
+  left: 13.5%;
+  width: 72%;
+  height: 63%;
   background: #ffffff;
   border-radius: 18px;
   overflow: hidden;
@@ -360,42 +334,42 @@
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
 .overlayContent {
-    color: white;
-    text-align: center;
+  color: white;
+  text-align: center;
 }
 
 .overlayText {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .progressBarContainer {
-    width: 300px;
-    height: 10px;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
-    overflow: hidden;
+  width: 300px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .progressBarFill {
-    height: 100%;
-    background-color: #007bff;
-    border-radius: 5px;
-    transition: width 0.3s ease-in-out;
+  height: 100%;
+  background-color: #007bff;
+  border-radius: 5px;
+  transition: width 0.3s ease-in-out;
 }
 
 .progressWrapper {
@@ -469,7 +443,6 @@
   border: 3px solid rgba(0, 123, 255, 0.2); /* 스피너 트랙 (테마 색상 연하게) */
   border-radius: 50%;
   border-top-color: #007BFF; /* 스피너 헤드 (테마 색상) */
-  animation: spin 1s linear infinite; /* ◀◀◀ 기존 @keyframes spin 재사용 */
+  animation: spin 1s linear infinite; /* 기존 @keyframes spin 재사용 */
 }
 
-/* 참고: @keyframes spin은 .loadingSpinner에서 이미 정의되어 있으므로 추가할 필요 없음 */

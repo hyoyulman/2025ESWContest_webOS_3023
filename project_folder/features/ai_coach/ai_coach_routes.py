@@ -10,8 +10,8 @@ ai_coach_bp = Blueprint('ai_coach', __name__, url_prefix='/api/ai_coach')
 def init_session():
     """세션 시작 시 가전 브리핑을 반환하며 AI 세션을 초기화합니다."""
     try:
-        user_id = str(current_user['_id']) # Get user_id from current_user
-        briefing = ai_coach_service.initialize_general_chat_session(user_id) # Call the correct service function
+        user_id = str(current_user['_id']) 
+        briefing = ai_coach_service.initialize_general_chat_session(user_id) 
         return jsonify({"status": "success", "briefing": briefing})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -23,8 +23,8 @@ def start_photo_session():
     try:
         user_id = current_user['_id']
         data = request.get_json()
-        diary_id = data.get("diary_id")              # 추가
-        photo_list = data.get("photos", [])          # 선택한 사진들
+        diary_id = data.get("diary_id")              
+        photo_list = data.get("photos", [])          
 
         result = ai_coach_service.start_photo_session_logic(user_id, diary_id, photo_list)
         return jsonify({"status": "success", **result})
@@ -40,7 +40,7 @@ def next_photo():
     try:
         user_id = current_user['_id']
         data = request.get_json()
-        diary_id = data.get("diary_id")   # ← 추가
+        diary_id = data.get("diary_id")   
         result = ai_coach_service.next_photo_logic(user_id, diary_id)
         return jsonify({"status": "success", **result})
     except Exception as e:
@@ -53,7 +53,7 @@ def chat():
     try:
         user_id = current_user['_id']
         data = request.get_json()
-        diary_id = data.get("diary_id")             # 추가
+        diary_id = data.get("diary_id")            
         user_query = data.get("text")
 
         result = ai_coach_service.process_user_input_logic(user_id, user_query, diary_id)
@@ -61,8 +61,6 @@ def chat():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-
-# --- [ TTS 라우트 수정 ] ---
 @ai_coach_bp.route('/tts', methods=['POST'])
 @jwt_required() 
 def text_to_speech():
@@ -73,26 +71,18 @@ def text_to_speech():
     try:
         data = request.get_json()
         text = data.get('text')
-        diary_id = data.get('diary_id') # ✅ diary_id 받기
+        diary_id = data.get('diary_id') 
 
         if not text or not diary_id:
             return jsonify({"status": "error", "message": "텍스트 또는 diary_id가 없습니다."}), 400
         
-        # 1. 서비스가 (오디오 데이터, 마임타입) 튜플을 반환하도록 수정될 예정입니다.
         audio_content, mimetype = ai_coach_service.text_to_speech_logic(text, diary_id)
-        
-        # 2. 서비스에서 반환된 마임타입을 응답에 사용합니다.
         return Response(audio_content, mimetype=mimetype)
     
     except Exception as e:
         print(f"Error in TTS endpoint: {e}")
-        traceback.print_exc() # Print the full traceback
+        traceback.print_exc() 
         return jsonify({"status": "error", "message": str(e)}), 500
-    
-    
-''' 
-(참고) 기존 주석 처리된 코드는 /tts 엔드포인트가 이미 활성화되어 있으므로 삭제합니다.
-'''
 
 @ai_coach_bp.route('/stt', methods=['POST'])
 @jwt_required() # API 남용 방지를 위해 인증 필요
@@ -109,21 +99,17 @@ def speech_to_text():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# --- [ 일기 생성 라우트 수정 ] ---
 @ai_coach_bp.route('/create_diary', methods=['POST'])
 @jwt_required()
 def create_diary():
     """해시태그 선택 및 스피커(목소리) 설정 후 새로운 일기 세션 생성"""
     try:
         user_id = current_user['_id']
-        data = request.get_json() # ✅ 전체 JSON 데이터 받기
+        data = request.get_json() 
         
         categories = data.get('categories', [])
-        # ✅ 프론트에서 보낸 'speaker' 값을 받습니다. (예: "default", "soyeon", "yejin")
-        # ✅ 값이 없으면 "default"를 기본값으로 사용합니다.
         speaker = data.get('speaker', 'default') 
         
-        # ✅ 서비스 함수에 speaker 값을 전달합니다.
         diary_id = ai_coach_service.create_diary_session(user_id, categories, speaker)
         
         return jsonify({"status": "success", "diary_id": diary_id})
@@ -156,7 +142,7 @@ def update_diary(diary_id):
         summary_context = data.get("summary_context")
         status = data.get("status")
         photos = data.get("photos")
-        categories = data.get("categories") # Add categories field
+        categories = data.get("categories") 
 
         if not title and not summary_context and not status and not photos and not categories:
             return jsonify({"status": "error", "message": "수정할 내용(제목, 내용, 상태, 사진 또는 카테고리)이 없습니다."}), 400

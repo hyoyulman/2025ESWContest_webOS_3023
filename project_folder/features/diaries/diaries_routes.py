@@ -14,11 +14,8 @@ def get_diaries():
         search_term = request.args.get('search')
         date_str = request.args.get('date')
         user_diaries = diary_service.get_all_diaries(current_user['_id'], search_term, date_str)
-        # Convert datetime objects to ISO 8601 strings for frontend compatibility
-        # Manually process diaries to ensure ObjectId is converted to string for the frontend
         result = []
         for diary in user_diaries:
-            # Convert ObjectId to string
             diary['_id'] = str(diary['_id'])
             if 'created_at' in diary and isinstance(diary['created_at'], datetime.datetime):
                 diary['created_at'] = diary['created_at'].isoformat()

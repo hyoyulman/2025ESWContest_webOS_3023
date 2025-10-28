@@ -1,10 +1,8 @@
-// Calendar.js
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // ★ 추가
 import "./Calendar.css";
 import axios from "../api/axiosInstance";
 
-/* ========= 유틸 ========= */
 const buildIndex = (byMonth) => {
   const out = [];
   for (const [mKey, days] of Object.entries(byMonth || {})) {
@@ -24,7 +22,6 @@ const buildIndex = (byMonth) => {
           title,
           categories,
           text: `${title} ${categories.join(" ")} ${dateText}`.toLowerCase(),
-          // 검색 결과에서도 필요 시 이동 가능하도록 id 보존(안 쓰더라도 무해)
           id: ev?.id ?? ev?._id ?? ev?.diaryId ?? null,
         });
       });
@@ -43,7 +40,6 @@ const formatLabel = (monthKey, day) => {
     weekday: "short",
   });
 };
-/* ======================== */
 
 export default function Calendar() {
   const navigate = useNavigate(); // ★ 추가

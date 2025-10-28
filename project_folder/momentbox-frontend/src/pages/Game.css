@@ -78,18 +78,18 @@ html, body, #root { height: 100%; margin: 0; }
   background-size:
     180px, /* corn.png 크기 */
     200px, /* dinointrash.png 크기 */
-    500px, /* dinowithdog.png 크기 */
+    400px, /* dinowithdog.png 크기 */
     90px,  /* fire.png 크기 */
-    200px, /* paintingdog.png 크기 */
+    180px, /* paintingdog.png 크기 */
     110px; /* smile.png 크기 */
   /* 각 이미지별 위치 (순서대로 corn, dinointrash, dinowithdog, fire, paintingdog, smile) */
   background-position:
-    5% 80%,   /* corn.png 위치 (가로, 세로) */
-    85% 75%,  /* dinointrash.png 위치 (가로, 세로) */
-    15% 90%,  /* dinowithdog.png 위치 (가로, 세로) */
-    95% 50%,  /* fire.png 위치 (가로, 세로) */
-    95% 80%,  /* paintingdog.png 위치 (가로, 세로) */
-    90% 40%;  /* smile.png 위치 (가로, 세로) */
+    -2% 80%,   /* corn.png 위치 (가로, 세로) */
+    98% 75%,  /* dinointrash.png 위치 (가로, 세로) */
+    10% 105%,  /* dinowithdog.png 위치 (가로, 세로) */
+    98% 36%,  /* fire.png 위치 (가로, 세로) */
+    75% 80%,  /* paintingdog.png 위치 (가로, 세로) */
+    98% 30%;  /* smile.png 위치 (가로, 세로) */
   background-attachment: fixed; /* 스크롤 시 배경 고정 */
   z-index: 12; /* 모든 요소 위에 오도록 z-index를 매우 높게 설정 */
   pointer-events: none; /* 배경 이미지 클릭 방지 */
@@ -111,10 +111,20 @@ html, body, #root { height: 100%; margin: 0; }
 .lane--center{ height:var(--lane-w); width:120%; top:45%; background:repeating-linear-gradient(to right,var(--lane) 0 var(--dash-l),transparent var(--dash-l) calc(var(--dash-l) + var(--dash-gap))); filter:drop-shadow(0 1px 1px rgba(0,0,0,.25)); opacity:.9;}
 
 /* ===== 포스터 ===== */
-.poster{ position:absolute; z-index:2; width:var(--poster-w,170px); min-height:180px; padding:14px 16px; background:#fff; color:#222; border:2px solid #222; border-radius:6px; transform:rotate(var(--poster-rot,0deg)); user-select:none; pointer-events:auto; cursor:zoom-in; background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(0,0,0,.04)); background-blend-mode:multiply; box-shadow:0 6px 14px rgba(0,0,0,.35); opacity:.97;}
-.poster::before{ content:""; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-8deg); width:35px; height:15px; background:#eae8d7; box-shadow:0 4px 6px rgba(0,0,0,.25); opacity:.9; border-radius:2px;}
-.poster--9{ top:calc(var(--sky-h) + 10vh); left:7%; border:none; --poster-bg:#fff0f0; --poster-border:#e89a9a; --poster-fg:#5a5a5a; --poster-rot:2deg;}
-.pframe{ background:#fff; padding:10px; margin-bottom:8px;}
+.poster{ position:absolute; z-index:2; width:var(--poster-w,180px); min-height:180px; padding:14px 16px; background:#fff; color:#222; border:2px solid #fcfcfc; border-radius:6px; transform:rotate(var(--poster-rot,0deg)); user-select:none; pointer-events:auto; cursor:zoom-in; background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(0,0,0,.04)); background-blend-mode:multiply; box-shadow:0 6px 14px rgba(0,0,0,.35); opacity:.97;}
+.poster::before{ content:""; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-8deg); width:30px; height:15px; background:#eae8d7; box-shadow:0 4px 6px rgba(0,0,0,.25); opacity:.9; border-radius:2px;}
+/* === 포스터 개별 조정: poster--9만 === */
+.poster--9 {
+  --poster-w: 100px;
+  left: 2%;
+  top: calc(var(--sky-h) + 5vh);
+  border-color: #e89a9a;
+
+  /* 세로 크기 조정 */
+  min-height: 100px;   /* 원래 180px → 세로 줄이기 */
+  padding: 10px 12px;  /* 내부 여백 축소 */
+}
+
 .pimg{ display:block; width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:4px; user-select:none; pointer-events:none;}
 .pcap{ text-align:center;}
 .ptitle{ margin:0; font-weight:700; font-size:16px; line-height:1.2; letter-spacing:.2px;}
@@ -163,8 +173,8 @@ html, body, #root { height: 100%; margin: 0; }
   top:calc(var(--sky-h) + 5vh);      /* 배너 아래로 */
   left:50%;
   transform: translateX(-50%);
-  width: min(120vw, 1000px);
-  max-height: calc(100vh - var(--sky-h) - 12vh - var(--road-h));
+  width: min(100vw, 900px);
+  max-height: calc(100vh - var(--sky-h) - 18vh - var(--road-h));
   overflow:auto;
   background: #f6ecda; /* Parchment color */
  
@@ -184,13 +194,14 @@ html, body, #root { height: 100%; margin: 0; }
   border-top-left-radius:14px; border-top-right-radius:14px;
 }
 .quest-panel__title{
-  margin:0; font:800 18px/1 system-ui, sans-serif; /* reduced */
+  margin:0; font:800 20px/1 system-ui, sans-serif; /* reduced */
   text-align: center;
+  font-size: 20px;
 }
 
 .quest-panel__reset-info {
-  font-size: 12px; /* reduced */
-  color: #888; /* Gray color */
+  font-size: 15px; /* reduced */
+  color: #4e4e4e; /* Gray color */
   font-weight: normal;
 }
 

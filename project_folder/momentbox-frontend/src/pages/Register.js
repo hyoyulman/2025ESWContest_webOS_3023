@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
-import './Register.css'; // ✅ 스타일 추가
+import './Register.css'; 
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -31,7 +31,6 @@ function Register() {
         email,
         password
       });
-      // 메시지는 화면에 출력 + 즉시 로그인 페이지로 이동
       setSuccessMsg(response?.data?.message || '회원가입이 완료되었습니다.');
       navigate('/login');
     } catch (err) {

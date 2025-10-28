@@ -1,4 +1,3 @@
-// GalleryPage.jsx (또는 갤러리 페이지 컨테이너)
 import React, { useEffect, useState } from "react";
 import axios from "../api/axiosInstance";
 import Gallery from "./Gallery";   
@@ -13,8 +12,6 @@ export default function GalleryPage() {
         const response = await axios.get("/api/diaries/gallery");
         const diaries = response.data;
         
-        // API 응답을 Gallery 컴포넌트가 기대하는 형식으로 변환
-        // 각 diary 항목에 대해 첫 번째 사진을 대표로 하나의 item만 생성
         const formattedItems = diaries.map(diary => {
           if (!diary.photos || diary.photos.length === 0) {
             return null; // 사진이 없는 일기는 갤러리에서 제외

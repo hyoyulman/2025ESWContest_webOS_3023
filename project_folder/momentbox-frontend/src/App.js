@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axiosInstance from './api/axiosInstance'; // axios 대신 axiosInstance를 사용합니다.
+import axiosInstance from './api/axiosInstance'; 
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,9 +20,8 @@ import AiDiary from './pages/AiDiary';
 import AiChat from './pages/AiChat';
 import Dashboard from './pages/Dashboard';
 import GalleryPage from './pages/GalleryPage';
-import DeviceManagement from './pages/DeviceManagement'; // Import DeviceManagement
+import DeviceManagement from './pages/DeviceManagement'; 
 
-/** PrivateRoute */
 const PrivateRoute = ({ children, bootstrapped }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -31,7 +30,6 @@ const PrivateRoute = ({ children, bootstrapped }) => {
   return children;
 };
 
-/** PublicRoute */
 const PublicRoute = ({ children, bootstrapped }) => {
   const { user, loading } = useAuth();
   if (loading || !bootstrapped) return <div>로딩 중...</div>;
@@ -42,7 +40,6 @@ function AppContent() {
   const { login, logout, setLoading } = useAuth();
   const [bootstrapped, setBootstrapped] = useState(false);
 
-  // alert 무음 처리
   const originalAlertRef = useRef(null);
   useEffect(() => {
     originalAlertRef.current = window.alert;
@@ -52,7 +49,6 @@ function AppContent() {
     };
   }, []);
 
-  // [수정됨] 토큰 검증 로직
   useEffect(() => {
     const verifyUser = async () => {
       const accessToken = localStorage.getItem('accessToken');
@@ -67,7 +63,7 @@ function AppContent() {
         login({ email: res.data.email }, { accessToken, refreshToken });
       } catch (err) {
         console.error('토큰 검증 실패:', err);
-        logout(); // 토큰이 유효하지 않으면 로그아웃 처리
+        logout(); 
       } finally {
         setLoading(false);
         setBootstrapped(true);

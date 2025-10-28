@@ -20,14 +20,11 @@ class UserService:
         result = mongo.db.users.insert_one({
             "email": email,
             "password": hashed_password,
-            "points": 10000, # New: Initial points for the user
-            "closet": [], # New: Empty closet for new users
-            "equipped_items": {} # New: Empty equipped items for new users
+            "points": 10000, 
+            "closet": [],
+            "equipped_items": {} 
         })
         return str(result.inserted_id)
-            
-        # Initialize default devices for the new user(초기화 안함)
-        #lg_appliance_service.initialize_user_devices(user_id)
 
     def login_user(self, email, password):
         if not email or not password:
@@ -37,7 +34,6 @@ class UserService:
         pw_hash = user.get('password') if user else None
 
         if pw_hash and check_password_hash(pw_hash, password):
-            # 표준 방식을 사용하여 액세스 토큰 생성
             user_id = str(user['_id'])
             access_token = create_access_token(identity=user_id)
             refresh_token = create_refresh_token(identity=user_id)
@@ -62,7 +58,6 @@ class UserService:
             user.pop('password', None)
         return user
     
-    # New: Purchase item logic
     def purchase_item(self, user_id, item_id):
         user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
         if not user:
@@ -78,7 +73,6 @@ class UserService:
         if user.get('points', 0) < item['price']:
             raise ValueError("Not enough points to purchase this item")
 
-        # Perform purchase
         mongo.db.users.update_one(
             {"_id": ObjectId(user_id)},
             {
@@ -89,7 +83,6 @@ class UserService:
         updated_user = self.get_user_by_id(user_id)
         return updated_user
 
-    # New: Equip item logic
     def equip_item(self, user_id, item_id):
         user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
         if not user:
@@ -106,11 +99,9 @@ class UserService:
         if not category:
             raise ValueError("Item has no category defined")
 
-        # Clear all previously equipped items and equip the new one
         new_equipped_items = {}
         new_equipped_items[category] = item_id
 
-        # Update the user document
         mongo.db.users.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": {"equipped_items": new_equipped_items}}

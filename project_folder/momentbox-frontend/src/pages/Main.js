@@ -1,4 +1,3 @@
-// src/pages/Main.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Main.css';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -20,9 +19,6 @@ import CharacterBubble from './CharacterBubble';
 import { outfitMapping } from '../constants/outfitMapping';
 
 export default function Main() {
-  // 장착 정보 (서버에서 받아올 예정)
-  // 서버 예시 응답:
-  // equipped_items: { shoes: "suit_c" } 또는 { bottom: "indian_c" } 등
   const [equipped, setEquipped] = useState(null);
 
   // 패널/레이아웃 상태
@@ -39,12 +35,11 @@ export default function Main() {
   const [isBubbleVisible, setIsBubbleVisible] = useState(false);
   
 
-  const [photos, setPhotos] = useState({});
+  const [, setPhotos] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
   const fetchPhotos = useCallback(async () => {
     try {
-      // '/api/media/' 엔드포인트가 사용자별 미디어를 반환한다고 가정
       const res = await axiosInstance.get("/api/media/");
       setPhotos(res.data || []); // 받아온 데이터로 상태 업데이트
       console.log('Photos fetched in Main.js:', res.data); // 디버깅 로그
@@ -52,7 +47,7 @@ export default function Main() {
       console.error("Main.js: 사진 목록 불러오기 실패:", err);
       setPhotos([]); // 오류 발생 시 빈 배열로 설정
     }
-  }, []);
+  }, [setPhotos]);
 
 
   // --- 사진 업로드 관련 상태 및 핸들러 ---
@@ -93,7 +88,6 @@ export default function Main() {
       });
       alert('사진이 성공적으로 업로드되었습니다!');
       console.log('Upload success:', response.data);
-      // ===> [수정] 업로드 성공 후 사진 목록 다시 불러오기
       fetchPhotos();
     } catch (error) {
       alert('사진 업로드에 실패했습니다.');
@@ -121,12 +115,6 @@ export default function Main() {
     const fetchProfile = async () => {
       try {
         const res = await axiosInstance.get('/api/auth/profile');
-        // 기대 형태:
-        // {
-        //   points: ...,
-        //   closet: [...],
-        //   equipped_items: { bottom: "indian_c", ... }
-        // }
         if (res.data && res.data.equipped_items) {
           setEquipped(res.data.equipped_items);
         } else {
@@ -212,18 +200,11 @@ export default function Main() {
     setIsBubbleVisible(false);
   };
 
-  // ------------------------------------------------------------------
-  // 현재 보여줄 공룡 이미지/스타일 결정
-  //
-  // 1) equipped_items의 value들만 뽑아서 (["indian_c", ...])
-  // 2) outfitMapping에 등록된 첫 번째 코드 사용
   let outfitKey = 'default';
 
   if (equipped && typeof equipped === 'object') {
-    // equipped_items의 value들만 추출 (예: ["indian_c"] 또는 ["cook_c","suit_c"])
     const equippedValues = Object.values(equipped);
 
-    // 이 값들 중 outfitMapping에 존재하는 첫 번째를 채택
     for (const code of equippedValues) {
       if (code && outfitMapping[code]) {
         outfitKey = code;

@@ -1,6 +1,6 @@
 :root {
   /* === 커스터마이즈 가능한 변수들 === */
-  --horizon: 68vh;         /* 경계선 높이 (vh) */
+  --horizon: 74vh;         /* 경계선 높이 (vh) - 바닥을 더 얇게 */
   --line-thick: 7px;       /* 경계선 굵기 (background-size 높이) */
   --line-offset: -5px;     /* 경계선 위치 미세 조정 (px), -숫자 커질 수록 위로 올라감 */
   --line-color: #2b2b2b;   /* 선 색상 */
@@ -24,32 +24,37 @@
 
   /* === 소품(책장/달력) 위치·크기 변수 === */
   --shelf-left:    clamp(10%, 16vw, 22%);
-  --calendar-left: clamp(22%, 24vw, 32%);
+  --calendar-left: clamp(14%, 17vw, 20%);
   --shelf-bottom:  -8px;                                /* + 위 / - 아래 */
-  --calendar-rise: clamp(411px, 31vh, 456px);           /* + 위 */
-  --shelf-width:    clamp(140px, 16vw, 280px);
-  --calendar-width: clamp(56px, 6vw, 96px);
+  --calendar-rise: clamp(335px, 20vh, 400px);           /* + 위 */
+  --shelf-width: clamp(170px, 19vw, 320px);
+  --calendar-width: clamp(80px, 30vw, 80px);
 
   /* === 추가 소품(액자/게임기) 위치·크기 변수 === */
-  --frame-right: clamp(13%, 2vw, 4%);
+  --frame-right: clamp(6%, 8vw, 2%);
   --frame-rise:  clamp(260px, 24vh, 360px);
-  --frame-width: clamp(70px, 8vw, 120px);
+  --frame-width: clamp(80px, 8vw, 140px);
 
   --game-left: clamp(35%, 6vw, 10%);
   --game-bottom: -130px;
   --game-width: clamp(60px, 8vw, 110px);
 
-  --desk-left: clamp(54%, 40vw, 55%);
-  --desk-bottom: -50px;
-  --desk-width: clamp(200px, 20vw, 340px);
+  --desk-left: clamp(58%, 44vw, 60%);
+  --desk-bottom: -25px; /* 그대로 유지 */
+  --desk-width: clamp(200px, 23vw, 380px);
 
-  --diary-left:  clamp(60%, 64vw, 72%);   /* 책상 위쪽으로 옮김 */
-  --diary-bottom: 195px;                  /* 책상 위로 올리기 (값 ↑ = 더 위) */
-  --diary-width: clamp(70px, 7vw, 120px);
+  --diary-left:  clamp(12%, 80vw, 70%);   /* 책상 위쪽으로 옮김 */
+  --diary-bottom: 170px;                  /* 책상 위로 올리기 (값 ↑ = 더 위) */
+  --diary-width: clamp(70px, 10vw, 110px);
 
-  --dashboard-left: clamp(600px, 57vw, 1500px);
-  --dashboard-bottom: 330px;                   /* 그대로 유지 */
-  --dashboard-width: clamp(120px, 12vw, 250px); /* 더 크게 */
+  --dashboard-left: clamp(650px, 62vw, 1500px);
+  --dashboard-bottom: 300px;                   /* 그대로 유지 */
+  --dashboard-width: clamp(180px,18vw, 290px); /* 더 크게 */
+
+  /* === 카메라 버튼 위치·크기 변수 === */
+  --camera-left:   clamp(52%, 62vw, 70%);   /* 값↑ → 오른쪽 이동 */
+  --camera-bottom: 155px;                   /* 값↑ → 위로 이동 (소품 규칙과 동일) */
+  --camera-size:   clamp(56px, 7vw, 96px);  /* 반응형 크기 */
 
   /* ====================================== */
   /* 🗨 말풍선 위치/크기 커스텀 변수        */
@@ -58,7 +63,7 @@
   /* 말풍선 전체 박스의 기준 위치를 화면에서 직접 제어 */
   /* 단위 px, %, vw, vh 모두 가능 */
   --bubble-left: 30vw;    /* 말풍선을 가로로 어디 둘지 (왼쪽 기준). 값↑ → 오른쪽으로 이동 */
-  --bubble-bottom: 60vh;  /* 말풍선을 세로로 어디 둘지 (아래 기준). 값↑ → 위로 이동 */
+  --bubble-bottom: 70vh;  /* 말풍선을 세로로 어디 둘지 (아래 기준). 값↑ → 위로 이동 */
 
   /* 말풍선 본체 사이즈 */
   --bubble-min-width: 230px;   /* 말풍선 최소 가로폭 */
@@ -70,7 +75,7 @@
   --bubble-font-size: 1.1rem;
 
   /* 말풍선 꼬리 위치 (백분율). 0% = 말풍선 왼쪽, 50% = 가운데 */
-  --bubble-tail-x: 30%;
+  --bubble-tail-x: 70%;
 }
 
 /* ===== 전역 리셋 ===== */
@@ -144,7 +149,7 @@ html, body, #root {
 
 /* ===== 반응형 ===== */
 @media (max-width: 560px) {
-  :root { --horizon: 64vh; }
+  :root { --horizon: 70vh; }  /* 모바일에서도 바닥을 더 얇게 */
 }
 @media (prefers-reduced-motion: reduce) {
   .dino-img { transition: opacity .01s linear !important; }
@@ -193,7 +198,7 @@ html, body, #root {
 
 .decor-calendar{
   left: var(--calendar-left);
-  bottom: calc(100vh - var(--horizon) + var(--calendar-rise));
+  bottom: calc(100vh - var(--horizon) + var(--calendar-rise)); /* 통일 */
   width: var(--calendar-width);
   z-index: 3;
 }
@@ -238,17 +243,17 @@ html, body, #root {
   z-index: 3;
 }
 
-/* --- Camera Upload Button with Tooltip --- */
+/* --- Camera Upload Button with Tooltip (장면과 함께 스크롤) --- */
 .camera-container {
-  position: fixed;
-  bottom: 475px;
-  right: 650px;
+  position: absolute;
+  left: var(--camera-left);
+  bottom: calc(100vh - var(--horizon) + var(--camera-bottom));
   z-index: 1000;
 }
 
 .camera-upload-button {
-  width: 80px;
-  height: 80px;
+  width: var(--camera-size);
+  height: var(--camera-size);
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
@@ -273,9 +278,9 @@ html, body, #root {
   padding: 8px 12px;
   position: absolute;
   z-index: 1;
-  bottom: 120%;
-  left: 90%;
-  transform: rotate(2deg);
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
   opacity: 0;
   transition: opacity 0.3s, transform 0.2s;
   font-family: 'Nanum Pen Script', cursive;
@@ -285,14 +290,16 @@ html, body, #root {
 }
 
 .camera-container:hover .tooltip {
-    transform: rotate(0deg);
+  transform: translateX(-50%) rotate(0deg);
+  visibility: visible;
+  opacity: 1;
 }
 
 .camera-container .tooltip::before { /*카메라 말풍선 꼬리 테두리*/
   content: "";
   position: absolute;
   top: 100%;
-  left: 15%;
+  left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
@@ -306,7 +313,7 @@ html, body, #root {
   content: "";
   position: absolute;
   top: calc(100% + 2px);
-  left: 15%;
+  left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
@@ -314,11 +321,6 @@ html, body, #root {
   border-right: 10px solid transparent;
   border-top: 10px solid white;
   z-index: 1;
-}
-
-.camera-container:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
 }
 
 /* --- 확인 모달 --- */
@@ -419,6 +421,8 @@ html, body, #root {
 
 .tooltip-container:hover .tooltip {
   transform: translateX(-50%) rotate(0deg);
+  visibility: visible;
+  opacity: 1;
 }
 
 .tooltip-container .tooltip::before { /* 일반 툴팁 꼬리 테두리 */
@@ -447,11 +451,6 @@ html, body, #root {
   border-right: 10px solid transparent;
   border-top: 10px solid white;
   z-index: 1;
-}
-
-.tooltip-container:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
 }
 
 .tooltip-container:hover {

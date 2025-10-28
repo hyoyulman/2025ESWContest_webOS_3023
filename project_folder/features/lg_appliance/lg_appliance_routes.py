@@ -11,9 +11,7 @@ def get_all_devices():
     user_id = str(current_user['_id'])
     try:
         statuses = lg_appliance_service.get_all_statuses(user_id)
-        print("--- DEBUG: All device statuses sent to client ---")
         print(statuses)
-        print("-------------------------------------------------")
         return jsonify({"status": "success", "devices": statuses})
     except Exception as e:
         traceback.print_exc()

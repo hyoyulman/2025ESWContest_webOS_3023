@@ -29,7 +29,6 @@ def get_weekly_quests():
     """
     user_id = get_jwt_identity()
     quests = quests_service.get_user_weekly_quests(user_id)
-    # 서비스 쪽 로직은 그대로 사용
     return jsonify(quests), 200
 
 
@@ -54,7 +53,6 @@ def claim_quest():
     - user_progress만 completed/claimed로 바꾼다 (낙관적 갱신)
     """
 
-    # CORS preflight 방어 (보통은 app.before_request에서 이미 처리됨)
     if request.method == 'OPTIONS':
         return ("", 200)
 
@@ -65,14 +63,9 @@ def claim_quest():
     if not quest_id:
         return jsonify({"error": "questId required"}), 400
 
-    # 실제 비즈니스 로직은 서비스 계층에서 처리하는 게 정상이다.
-    # 서비스에 claim_quest가 구현되어 있다면 그 결과를 사용한다.
-    # claim_quest는 업데이트된 총 포인트를 리턴한다고 가정한다.
     try:
         updated_points = quests_service.claim_quest(user_id, quest_id)
-        # 예: updated_points == 1234
     except AttributeError:
-        # 아직 claim_quest 구현이 안 되어 있다면 임시 값으로 응답
         updated_points = 1100
 
     return jsonify({

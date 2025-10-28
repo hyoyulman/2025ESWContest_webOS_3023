@@ -1,22 +1,23 @@
 /* === 갤러리 전용 변수 === */
 :root {
-  --gallery-wall:  #c9c4be;  /* 어두운 벽 */
-  --gallery-light: #fbf6ee;  /* 조명 밝은 면 */
+  --gallery-wall: #c9c4be; /* 어두운 벽 */
+  --gallery-light: #fbf6ee; /* 조명 밝은 면 */
   --extra-scroll: 120vh;
 
-  --lamp-apex-y:   225px;
-  --shade-bottom:  64vh;
+  /* 램프 그림자 꼭짓점 (요청대로 180px로 수정됨) */
+  --lamp-apex-y: 180px;
+  --shade-bottom: 64vh;
 
   --lamp-w: clamp(200px, 20vw, 360px);
 
   /* 카드 공통 */
-  --polaroid-bg:   #fff;
-  --polaroid-pad:  8px;
-  --polaroid-gap:  20px;
+  --polaroid-bg: #fff;
+  --polaroid-pad: 8px;
+  --polaroid-gap: 20px;
 
-  /* 라이트박스 */
-  --lb-max-w:  Min(90vw, 860px);
-  --lb-img-max: Min(82vw, 720px);
+  /* 라이트박스 (Min -> min 으로 수정) */
+  --lb-max-w: min(90vw, 860px);
+  --lb-img-max: min(82vw, 720px);
 }
 
 /* === 장면 컨테이너 === */
@@ -31,59 +32,58 @@
 /* 좌/우 어두운 삼각형(조명 콘) */
 .gallery-scene::before,
 .gallery-scene::after {
-  content:"";
-  position:absolute;
-  top:0;
-  width:100%;
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100%;
   height: var(--shade-bottom);
   background: var(--gallery-wall);
-  z-index:0;
+  z-index: 0;
 }
 .gallery-scene::before {
-  left:0;
+  left: 0;
   clip-path: polygon(0% 0%, 50% 0%, 50% var(--lamp-apex-y), 0% var(--shade-bottom));
 }
 .gallery-scene::after {
-  right:0;
+  right: 0;
   clip-path: polygon(50% 0%, 100% 0%, 100% var(--shade-bottom), 50% var(--lamp-apex-y));
 }
 
 /* === 전등 === */
 .gallery-lamp {
-  position:absolute;
+  position: absolute;
   top: -20px;
-  left:50%;
+  left: 50%;
   transform: translateX(-50%);
   width: var(--lamp-w);
-  z-index:2;
+  z-index: 2;
 }
 .gallery-lampImg {
-  display:block !important;
-  width:100% !important;
-  height:auto !important;
-  user-select:none;
-  -webkit-user-drag:none;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 /* === 사진 무대 === */
 .gallery-stage {
   position: relative;
-  z-index:1;
+  z-index: 1;
   max-width: min(1100px, 86vw);
+  /* 램프 높이 변경에 따라 사진 시작 위치도 자동 조절됨 */
   margin: calc(var(--lamp-apex-y) + 8vh) auto 12vh;
   padding: 2rem 1rem 4rem;
 }
 
 /* =========================
    3-열 고정 Grid
-   가운데 열: 전등 밑 중앙
-   좌/우 열: 더 아래 시작
    ========================= */
 .polaroid-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(220px, 1fr));
   gap: 24px;
-  justify-items: center; /* 각 열 중앙 정렬 */
+  justify-items: center;
   align-items: start;
 }
 
@@ -93,20 +93,20 @@
   flex-direction: column;
   gap: var(--polaroid-gap);
   width: 100%;
-  max-width: 280px; /* 카드 폭 상한 */
+  max-width: 280px;
 }
 
 /* 좌우 열을 더 아래에서 시작 */
-.grid-col.left  { margin-top: 100px; }
-.grid-col.center{ margin-top: 30px;    } /* 전등 바로 아래 */
+.grid-col.left { margin-top: 100px; }
+.grid-col.center { margin-top: 30px; }
 .grid-col.right { margin-top: 150px; }
 
 @media (max-width: 980px) {
   .polaroid-grid {
     grid-template-columns: 1fr 1fr;
   }
-  .grid-col.left  { margin-top: 36px; }
-  .grid-col.center{ margin-top: 0; }
+  .grid-col.left { margin-top: 36px; }
+  .grid-col.center { margin-top: 0; }
   .grid-col.right { margin-top: 42px; }
 }
 @media (max-width: 640px) {
@@ -124,18 +124,18 @@
 .polaroid {
   position: relative;
   width: 100%;
-  max-width: 280px; /* 기존 값 유지 */
-  transform: scale(0.9) translateX(var(--jx, 0px)) translateY(var(--jy, 0px)); /*사진 scale 조절, 0.85면 기존의 85%*/
-  transform-origin: center top; /* 위쪽 기준으로 축소 */
+  max-width: 280px;
+  transform: scale(0.9) translateX(var(--jx, 0px)) translateY(var(--jy, 0px));
+  transform-origin: center top;
   transition: transform 140ms ease, filter 140ms ease;
 }
 
 .polaroid:hover {
   transform: translateX(var(--jx, 0px)) translateY(var(--jy, 0px)) translateY(-4px);
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
 }
 
-/* 마스킹 테이프: 카드마다 1개, 중앙 부착 */
+/* 마스킹 테이프 */
 .tape {
   position: absolute;
   top: -10px;
@@ -145,12 +145,12 @@
   background: #efe7d4;
   opacity: 0.94;
   border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.12) inset;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12) inset;
   transform-origin: center;
   z-index: 2;
 }
 .tape--tiltL { transform: translateX(-50%) rotate(-10deg); }
-.tape--tiltR { transform: translateX(-50%) rotate( 10deg); }
+.tape--tiltR { transform: translateX(-50%) rotate(10deg); }
 
 /* 카드 본체 */
 .polaroid-body {
@@ -161,8 +161,8 @@
   padding: var(--polaroid-pad);
   border-radius: 8px;
   box-shadow:
-    0 1px 0 rgba(0,0,0,0.06),
-    0 8px 20px rgba(0,0,0,0.10);
+    0 1px 0 rgba(0, 0, 0, 0.06),
+    0 8px 20px rgba(0, 0, 0, 0.10);
   position: relative;
   overflow: hidden;
 }
@@ -171,12 +171,11 @@
   width: 100%;
   height: auto;
   border-radius: 6px;
-  user-select:none;
-  -webkit-user-drag:none;
-  transition: opacity 0.2s ease-in-out; /* 부드러운 투명도 전환 */
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity 0.2s ease-in-out;
 }
 
-/* 사진 위에 마우스 올렸을 때 이미지 반투명 처리 */
 .polaroid-body:hover .polaroid-img {
   opacity: 0.6;
 }
@@ -184,29 +183,25 @@
 /* 호버 힌트 ('CLICK' 버튼) */
 .polaroid-hint {
   position: absolute;
-  /* 정중앙 배치 */
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.9); /* 시작 시 약간 작게 */
-  
-  padding: 6px 12px; /* 패딩 키워서 버튼 느낌 강화 */
+  transform: translate(-50%, -50%) scale(0.9);
+  padding: 6px 12px;
   font-weight: 800;
   letter-spacing: 0.5px;
-  background: rgba(255,255,255,0.92);
-  border-radius: 8px; /* 좀 더 둥글게 */
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8px;
   border: 2px dashed #222;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   opacity: 0;
   transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
-  white-space: nowrap; /* 'CLICK!' 글자 줄바꿈 방지 */
+  white-space: nowrap;
 }
 
-/* 사진 위에 마우스 올렸을 때 힌트 표시 */
 .polaroid-body:hover .polaroid-hint {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1); /* 원래 크기로 */
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /* =========================
@@ -215,7 +210,7 @@
 .lightbox-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: grid;
   place-items: center;
   z-index: 999;
@@ -226,29 +221,52 @@
   max-height: 90vh;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
   padding: 28px 54px;
   margin: auto;
 }
 .lightbox-close {
-  position:absolute;
-  top: 10px; right: 14px;
-  font-size: 28px;
-  line-height: 1;
-  width: 36px; height: 36px;
+  position: absolute;
+  top: 10px;
+  right: 14px;
+
+  /* 원형 크기 고정 */
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;    /* 테두리까지 36x36에 포함 */
+  padding: 0;                /* 브라우저 기본 padding 제거 */
+
+  /* 완전한 원형 */
   border-radius: 50%;
-  border: 0;
+  border: 2px solid #ffffff;
+
+  /* 시각 스타일 */
   background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+
+  /* 가운데 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* X 아이콘 스타일 */
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  color: #333;
+
+  /* 브라우저 기본 버튼 외형 제거 (특히 iOS/Safari 대비) */
+  appearance: none;
+  -webkit-appearance: none;
 }
 .lightbox-nav {
-  position:absolute;
+  position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: 44px; height: 64px;
   border: 0;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.9);
   font-size: 40px;
   line-height: 64px;
   text-align: center;
@@ -256,8 +274,8 @@
   cursor: pointer;
   user-select: none;
 }
-.lightbox-prev{ left: 8px; }
-.lightbox-next{ right: 8px; }
+.lightbox-prev { left: 8px; }
+.lightbox-next { right: 8px; }
 .lightbox-media {
   display: grid;
   place-items: center;
@@ -292,25 +310,20 @@
   text-align: center;
 }
 
-/* 라이트박스 '일기 보러가기' 버튼 (X 버튼과 유사한 디자인) */
 .lightbox-diary-button {
   position: absolute;
-  right: 54px; /* 닫기 버튼 옆으로 이동 */
-  top: 10px;   /* 닫기 버튼과 같은 높이 */
-  
-  /* X 버튼 테마를 적용한 텍스트 버튼 */
+  right: 54px;
+  top: 10px;
   border: 0;
   background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  border-radius: 18px; /* 원형에 가까운 둥근 모서리 */
+  border-radius: 18px;
   padding: 8px 16px;
-  
   color: #333;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
-
   transition: transform 0.2s ease;
 }
 
@@ -321,10 +334,14 @@
 /* 스크롤 길이 확보용 여백 */
 .scroll-spacer { height: var(--extra-scroll); }
 
-/* 페이지 맨 아래 배경 PNG */
+/* ▼▼▼ 페이지 맨 아래 배경 PNG (수정됨) ▼▼▼ */
+/* position: relative;를 유지하여 문서 흐름을 따릅니다.
+  .scroll-spacer (120vh)가 이 요소를 
+  페이지 맨 아래로 밀어내므로 모든 환경에서 일관되게 보입니다.
+*/
 .gallery-bottom { 
   position: relative; 
-  z-index: 0; 
+  z-index: 2; 
   width: 100%; 
   overflow: hidden; 
 }
@@ -337,9 +354,9 @@
 }
 
 @media (max-width: 640px){
-  :root{ --lamp-apex-y: 150px; }
-  .lightbox{ padding: 20px 44px; }
-  .lightbox-media img{ max-width: 88vw; }
+  :root { --lamp-apex-y: 150px; }
+  .lightbox { padding: 20px 44px; }
+  .lightbox-media img { max-width: 88vw; }
 }
 
 /* === 카드 메타(날짜/카테고리/상태) === */
@@ -371,14 +388,14 @@
   display: inline-block;
   padding: 2px 6px;
   border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   background: #fff;
   line-height: 1.4;
   font-weight: 600;
 }
 
 .badge--status {
-  border-color: rgba(0,0,0,0.18);
+  border-color: rgba(0, 0, 0, 0.18);
 }
 
 .badge--cat {
@@ -389,3 +406,4 @@
   flex-direction: column;
   align-items: center;
 }
+

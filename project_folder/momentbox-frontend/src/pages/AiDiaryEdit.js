@@ -6,7 +6,6 @@ import axios from "../api/axiosInstance";
 import book1 from "../assets/book1.png";
 import book2 from "../assets/book2.png";
 import ink from "../assets/ink.png";
-import pen from "../assets/pen.png";
 
 const PREDEFINED_CATEGORIES = ["설렘", "우울", "행복", "피곤", "걱정"];
 
@@ -23,7 +22,7 @@ export default function AiDiaryEdit() {
   const [selectedDiaryPhotos, setSelectedDiaryPhotos] = useState([]);
   const [activePhoto, setActivePhoto] = useState(null);
   const [showSavePopup, setShowSavePopup] = useState(false);
-  
+
   const textareaRef = useRef(null);
 
   const formattedDate = useMemo(() => {
@@ -41,7 +40,7 @@ export default function AiDiaryEdit() {
     }
   }, [diary?.created_at]);
 
-  
+
 
   useEffect(() => {
     const fetchDiary = async () => {
@@ -106,10 +105,10 @@ export default function AiDiaryEdit() {
 
   const handleSave = async () => {
     try {
-      await axios.put(`/api/ai_coach/diaries/${diaryId}`, { 
+      await axios.put(`/api/ai_coach/diaries/${diaryId}`, {
         title: editableTitle,
         summary_context: editableContent,
-        photos: selectedDiaryPhotos.map(p => ({ filename: p.filename, url: p.url, _id: p._id })), 
+        photos: selectedDiaryPhotos.map(p => ({ filename: p.filename, url: p.url, _id: p._id })),
         categories: editableCategories,
         status: "completed",
       });
@@ -127,7 +126,7 @@ export default function AiDiaryEdit() {
     }
   };
 
-  
+
 
   const toggleCategory = (category) => {
     setEditableCategories((prev) =>
@@ -142,7 +141,7 @@ export default function AiDiaryEdit() {
       <div
         className={styles.scene}
         role="img"
-        aria-label="책상 탑뷰: 책, 잉크, 펜, 아이패드"
+        aria-label="책상 탑뷰: 책, 잉크, 아이패드"
       >
         <img
           className={`${styles.obj} ${styles.book2}`}
@@ -162,8 +161,6 @@ export default function AiDiaryEdit() {
           alt="잉크병"
           draggable="false"
         />
-
-        <img className={styles.pen} src={pen} alt="만년필" draggable="false" />
 
         <section className={styles.ipad} aria-label="아이패드 화면(일기)">
           <div className={styles.frame}>
@@ -199,7 +196,7 @@ export default function AiDiaryEdit() {
                         value={editableContent}
                         onChange={(e) => setEditableContent(e.target.value)}
                       />
-                      
+
                     </div>
                   </div>
                   <div className={styles.editColumnRight}>
@@ -286,7 +283,7 @@ export default function AiDiaryEdit() {
               )}
 
               <div className={styles.actionsContainer}>
-                
+
                 <button
                   className={styles.editButton}
                   onClick={isEditing ? handleSave : handleEditClick}

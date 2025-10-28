@@ -3,7 +3,6 @@ from bson.json_util import dumps
 from flask_jwt_extended import jwt_required, current_user
 from .media_service import MediaService
 
-# media_bp의 URL 접두사를 /api/media로 설정합니다.
 media_bp = Blueprint('media', __name__, url_prefix='/api/media')
 media_service = MediaService()
 
@@ -14,7 +13,7 @@ def get_all_user_media():
     """현재 로그인된 사용자의 모든 미디어를 가져옵니다."""
     try:
         user_media = media_service.get_all_media(current_user['_id'])
-        media_list = list(user_media)  # Cursor -> List
+        media_list = list(user_media)  
         for item in media_list:
             item["_id"] = str(item["_id"])
             item["user_id"] = str(item["user_id"])
@@ -34,7 +33,7 @@ def get_single_media_item(media_id):
         
         media_item["_id"] = str(media_item["_id"])
         media_item["user_id"] = str(media_item["user_id"])
-        return jsonify(media_item)  # ✅ dumps 대신 jsonify
+        return jsonify(media_item)  
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -62,7 +61,6 @@ def upload_new_media():
         return jsonify({"status": "success", "message": "파일 업로드 완료", **result}), 201
 
     except Exception as e:
-        # 서비스에서 발생한 에러를 클라이언트에게 반환합니다.
         return jsonify({"error": "파일 업로드 중 오류 발생", "details": str(e)}), 500
 
 @media_bp.route('/<media_id>', methods=['DELETE'])

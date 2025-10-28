@@ -33,19 +33,15 @@ class DiaryService:
             })
             return diary
         except Exception as e:
-            # Handle potential errors, e.g., invalid ObjectId format
             print(f"Error fetching diary by id: {e}")
             return None
 
     def get_diary_by_created_at(self, created_at_str, user_id):
         try:
-            # Handle ISO format string with 'Z' for UTC
             if created_at_str.endswith('Z'):
                 created_at_str = created_at_str[:-1] + '+00:00'
             
             target_date = datetime.datetime.fromisoformat(created_at_str)
-
-            # To avoid precision issues, query for a 1-second range
             start_date = target_date
             end_date = target_date + datetime.timedelta(seconds=1)
 
@@ -58,7 +54,6 @@ class DiaryService:
             })
             return diary
         except (ValueError, TypeError) as e:
-            # Handle potential errors, e.g., invalid date format
             print(f"Error parsing date or fetching diary by created_at: {e}")
             return None
 
@@ -70,8 +65,8 @@ class DiaryService:
         }
         projection = {
             'title': 1,
-            'created_at': 1, # created_at을 가져옵니다.
-            'photos': 1, # 사진 전체 정보를 가져옵니다.
+            'created_at': 1, 
+            'photos': 1, 
             '_id': 1
         }
         diaries_with_photos = mongo.db.diaries.find(query_filter, projection).sort('created_at', -1)
