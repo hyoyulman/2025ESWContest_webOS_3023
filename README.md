@@ -18,49 +18,33 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 <table>
   <tr align="center">
     <td>
+      <p>(사진을 여기에 넣어주세요)</p>
       <strong>박소연</strong><br/>
       <small>AI / PM</small>
     </td>
     <td>
+      <p>(사진을 여기에 넣어주세요)</p>
       <strong>이예진</strong><br/>
       <small>Frontend</small>
     </td>
     <td>
+      <p>(사진을 여기에 넣어주세요)</p>
       <strong>배준형</strong><br/>
       <small>Backend</small>
     </td>
     <td>
-      (사진을 여기에 넣어주세요)
-    </td>
-    <td>
-      (사진을 여기에 넣어주세요)
-    </td>
-    <td>
-      (사진을 여기에 넣어주세요)
-    </td>
-  </tr>
-</table>
-
-<table>
-  <tr align="center">
-    <td>
+      <p>(사진을 여기에 넣어주세요)</p>
       <strong>박승재</strong><br/>
       <small>Hardware / IoT</small>
     </td>
     <td>
+      <p>(사진을 여기에 넣어주세요)</p>
       <strong>여승엽</strong><br/>
       <small>Data / Server</small>
     </td>
   </tr>
-  <tr align="center">
-    <td>
-      (사진을 여기에 넣어주세요)
-    </td>
-    <td>
-      (사진을 여기에 넣어주세요)
-    </td>
-  </tr>
 </table>
+
 ---
 
 ## 2.  가전 주요 기능
