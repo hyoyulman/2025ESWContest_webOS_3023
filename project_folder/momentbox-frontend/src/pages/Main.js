@@ -1,5 +1,5 @@
 // src/pages/Main.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './Main.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance'; // API 인스턴스
@@ -37,9 +37,23 @@ export default function Main() {
   // 퀘스트 추천 상태
   const [recommendedQuest, setRecommendedQuest] = useState(null);
   const [isBubbleVisible, setIsBubbleVisible] = useState(false);
+  
 
+  const [photos, setPhotos] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
+  const fetchPhotos = useCallback(async () => {
+    try {
+      // '/api/media/' 엔드포인트가 사용자별 미디어를 반환한다고 가정
+      const res = await axiosInstance.get("/api/media/");
+      setPhotos(res.data || []); // 받아온 데이터로 상태 업데이트
+      console.log('Photos fetched in Main.js:', res.data); // 디버깅 로그
+    } catch (err) {
+      console.error("Main.js: 사진 목록 불러오기 실패:", err);
+      setPhotos([]); // 오류 발생 시 빈 배열로 설정
+    }
+  }, []);
+
 
   // --- 사진 업로드 관련 상태 및 핸들러 ---
   const [selectedFile, setSelectedFile] = useState(null);
@@ -79,13 +93,14 @@ export default function Main() {
       });
       alert('사진이 성공적으로 업로드되었습니다!');
       console.log('Upload success:', response.data);
+      // ===> [수정] 업로드 성공 후 사진 목록 다시 불러오기
+      fetchPhotos();
     } catch (error) {
       alert('사진 업로드에 실패했습니다.');
       console.error('Upload error:', error);
     } finally {
       setUploading(false);
       setSelectedFile(null);
-      // 파일 인풋 초기화
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -155,6 +170,12 @@ export default function Main() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
+
+
+  useEffect(() => {
+    fetchPhotos();
+  }, [fetchPhotos]);
+
 
   // 3) 업로드 트리거 (다른 페이지에서 넘어올 때)
   useEffect(() => {

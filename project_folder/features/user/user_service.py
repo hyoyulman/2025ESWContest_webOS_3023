@@ -1,7 +1,7 @@
 import json
 from extensions import mongo
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 import datetime
 from bson.objectid import ObjectId
 from config import Config # For JWT_SECRET_KEY
@@ -38,8 +38,13 @@ class UserService:
 
         if pw_hash and check_password_hash(pw_hash, password):
             # 표준 방식을 사용하여 액세스 토큰 생성
-            token = create_access_token(identity=str(user['_id']))
-            return token
+            user_id = str(user['_id'])
+            access_token = create_access_token(identity=user_id)
+            refresh_token = create_refresh_token(identity=user_id)
+            return {
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }
         else:
             raise ValueError("Invalid email or password")
 

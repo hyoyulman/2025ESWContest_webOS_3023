@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from bson.json_util import dumps
 from .user_service import UserService # Import the service
-from flask_jwt_extended import jwt_required, current_user # Assuming this is needed for other routes later //승엽 추가
+from flask_jwt_extended import jwt_required, current_user, get_jwt_identity, create_access_token # Assuming this is needed for other routes later //승엽 추가
 
 user_bp = Blueprint('user', __name__)
 user_service = UserService() # Instantiate the service
@@ -40,12 +40,17 @@ def login():
     email = data.get('email')
     password = data.get('password')
     try:
-        token = user_service.login_user(email, password)
-        print(f"✅ 로그인 성공! 생성된 토큰: {token}")
-        return jsonify({"status": "success", "token": token})
+        tokens = user_service.login_user(email, password)
+        print(f"✅ 로그인 성공! 생성된 토큰: {tokens}")
+        return jsonify({
+            "status": "success",
+            "access_token": tokens["access_token"],
+            "refresh_token": tokens["refresh_token"]
+        })
     except ValueError as e:
         return jsonify({"error": str(e)}), 401
     except Exception as e:
+        print(f"Login error: {e}") # 디버깅용 로그
         return jsonify({"error": "An unexpected error occurred"}), 500
 
 # --- Admin/debugging routes ---
@@ -90,4 +95,15 @@ def get_profile():
         # 필요하다면 다른 정보(예: name)도 추가할 수 있습니다.
     })
 
+@user_bp.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True) # refresh=True 옵션으로 리프레시 토큰 필요 명시
+def refresh():
+    try:
+        current_user_id = get_jwt_identity() # 리프레시 토큰에서 사용자 ID 가져오기
+        # 새로운 액세스 토큰 생성
+        new_access_token = create_access_token(identity=current_user_id)
+        return jsonify({"status": "success", "access_token": new_access_token}), 200
+    except Exception as e:
+        print(f"Token refresh error: {e}") # 디버깅용 로그
+        return jsonify({"error": "Failed to refresh token"}), 500
 

@@ -6,6 +6,7 @@ from flask_cors import CORS
 from bson.objectid import ObjectId
 from extensions import bcrypt, jwt, mongo
 from dotenv import load_dotenv
+from datetime import timedelta
 
 import dns.resolver
 dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
@@ -31,6 +32,8 @@ def create_app():
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
     app.config["JWT_HEADER_NAME"] = "Authorization"
     app.config["JWT_HEADER_TYPE"] = "Bearer"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7) 
     
     # --- Extensions Init ---
     mongo.init_app(app)
@@ -136,4 +139,4 @@ if __name__ == '__main__':
     #app.run(debug=True, host='0.0.0.0', port=5001, ssl_context=('cert.pem', 'key.pem'))
     # WARNING: debug=True is a security risk in production. 
     # It is recommended to set this to False and use proper logging.
-    app.run(debug=True, host='0.0.0.0', port=5001, ssl_context=('cert.pem', 'key.pem'))
+    app.run(debug=False, host='0.0.0.0', port=5001, ssl_context=('cert.pem', 'key.pem'))
