@@ -106,7 +106,7 @@ export default function AiDiaryEdit() {
 
   const handleSave = async () => {
     try {
-      await axios.put(`/api/ai_coach/diaries/${diaryId}`, {
+      await axios.put(`/api/ai_coach/diaries/${diaryId}`, { 
         title: editableTitle,
         summary_context: editableContent,
         photos: selectedDiaryPhotos.map(p => ({ filename: p.filename, url: p.url, _id: p._id })), 

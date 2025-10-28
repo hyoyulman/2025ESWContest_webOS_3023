@@ -28,7 +28,42 @@ class QuestsService:
             "massage_chair": "Massage Chair", 
             "aero_tower": "Aero Tower" 
         }
-
+        
+    def claim_quest(self, user_id, quest_id):
+        user_object_id = ObjectId(user_id)
+        
+        # 1. 퀘스트 마스터 정보 조회
+        quest_master = self.quests.find_one({"_id": ObjectId(quest_id)})
+        if not quest_master:
+            raise ValueError("Quest not found")
+        
+        # 2. 사용자 퀘스트 진행 상태 조회 및 확인
+        user_quest = self.user_quests.find_one({"user_id": user_object_id, "quest_id": ObjectId(quest_id)})
+        
+        if not user_quest:
+            raise ValueError("User quest record not found")
+        if user_quest.get('claimed'):
+            raise ValueError("Reward already claimed")
+        if user_quest.get('status') != 'completed':
+            raise ValueError("Quest not yet completed")
+            
+        reward = quest_master.get('reward', 0)
+        
+        # 3. 보상 수령 처리: user_quests 상태 업데이트 및 포인트 지급
+        # 퀘스트 상태를 claimed=True로 업데이트
+        self.user_quests.update_one(
+            {"_id": user_quest['_id']},
+            {"$set": {"claimed": True, "claimed_at": datetime.datetime.now(datetime.timezone.utc)}}
+        )
+        # 사용자 포인트 증가
+        mongo.db.users.update_one(
+            {"_id": user_object_id},
+            {"$inc": {"points": reward}}
+        )
+        # 4. 업데이트된 사용자 포인트 반환
+        updated_user = mongo.db.users.find_one({"_id": user_object_id})
+        return updated_user.get('points', 0)
+    
     def _get_or_create_weekly_quests(self):
         """Gets the current weekly quests, creating them if they don't exist."""
         now = datetime.datetime.now(datetime.timezone.utc)

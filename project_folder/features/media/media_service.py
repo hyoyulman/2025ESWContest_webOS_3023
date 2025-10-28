@@ -18,9 +18,7 @@ class MediaService:
             self.bucket = None
 
     def get_all_media(self, user_id):
-        # 완료된 미디어만 사용자에게 보여줍니다.
-        #return list(mongo.db.media.find({'user_id': ObjectId(user_id), 'status': 'completed'}))
-        return list(mongo.db.media.find({'status': 'completed'}))  # ← 임시: 유저 필터 제거
+        return list(mongo.db.media.find({'user_id': ObjectId(user_id), 'status': 'completed'}))
 
     def get_single_media(self, media_id, user_id):
         return mongo.db.media.find_one({"_id": ObjectId(media_id), 'user_id': ObjectId(user_id), 'status': 'completed'})
