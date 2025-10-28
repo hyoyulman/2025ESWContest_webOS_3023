@@ -97,16 +97,40 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 ├─ requirements.txt              # (백엔드) Pip 라이브러리 목록
 └─ TTS_inference_server.ipynb    # (AI) Colab XTTS 추론 서버 - 따로 구동
 ```
+---
+## 6 AI(TTS) 개발 과정 요약
 
-## 6. 라즈베리파이 배포 가이드
+1.[TTS](https://www.notion.so/TTS-25fece9a002981d7b6edcf21a12e8abd?pvs=21)
+
+2.[LG thinkq API](https://www.notion.so/LG-thinkq-API-25fece9a0029819790b9f9fa4c8d2829?pvs=21)
+
+3.[gemini 기반 대화](https://www.notion.so/gemini-25fece9a00298117a6a6e3bd3bb30b32?pvs=21)
+
+4.[tts + llm 결합](https://www.notion.so/tts-llm-262ece9a0029802faebef39161ab5cc5?pvs=21)
+
+5.[xtts v2 파인튜닝](https://www.notion.so/xtts-v2-263ece9a0029800798e7e060356b5ab6?pvs=21)
+
+
+6.[Colab inference ↔ flask 통신](https://www.notion.so/Colab-inference-flask-266ece9a002980879335e49fc62927cd?pvs=21)
+
+---
+## 7. 라즈베리파이4 배포 가이드
 
 라즈베리파이 OS(Debian 기반) 환경에서 Flask 서버를 구동하기 위한 절차입니다.                    
 위 글은 라즈베리파이4 기준으로 작성되었습니다.
 
 
-### 0. 기본 설정 및 환경 구성
+### 0. 기본 설정 및 환경 구성 
+<details><summary>MongoDB Setting
+</summary>
 
-<details><summary>notion.md 파일 인용
+###  MongoDB 계정 생성, URL 링크 방법
+-[몽고 DB 가이드라인 책자](https://tilnote.io/books/681169cb3c3f2fc7099cab49/68116a2b3c3f2fc7099cabe7)<br>
+-[온라인 몽고 DB 계정 생성 방법](https://dnl1029.tistory.com/23)
+</details>
+
+
+<details><summary>HW Setting & Test
 </summary>
 
 
@@ -257,12 +281,4 @@ ifconfig. #터미널에서 wlan0주소 확인
 https://<라즈베리파이_IP>:5001 #
 ```
 ---
-
-## cf. 개발 시도 Vlog, Guideline 및 참고자료 모음
-### 1. MongoDB 계정 생성, URL 링크 방법
--[몽고 DB 가이드라인 책자](https://tilnote.io/books/681169cb3c3f2fc7099cab49/68116a2b3c3f2fc7099cabe7)<br>
--[온라인 몽고 DB 계정 생성 방법](https://dnl1029.tistory.com/23)
-
-### 2. 
-
 
