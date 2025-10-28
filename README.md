@@ -29,8 +29,6 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
       <strong>배준형</strong><br/>
       <small>Backend</small>
     </td>
-  </tr>
-  <tr align="center">
     <td>
       (사진을 여기에 넣어주세요)
     </td>
