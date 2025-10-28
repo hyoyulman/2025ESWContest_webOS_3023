@@ -202,7 +202,7 @@ sudo apt-get install openssl ffmpeg git nodejs
 ```
 git clone https://github.com/hyoyulman/2025eswcontest_webos_3023.git 
 
-cd 2025eswcontest_webos_3023
+cd Main_folder
 ```
 ### 3. Python 가상환경 구성
 ```
@@ -215,38 +215,33 @@ source <가상환경_이름>/bin/activate 
 pip install -r requirements.txt
 ```
 
-### 3 - 1. 프론트엔드 모듈 구성 (가상환경 실행 후)
-```
-npm install # react 모듈 설치
-run npm build
-```
-### 3 - 2. axios (JWT 토큰 갱신 로직 구현)
-```
-npm install axios
-```
 
 ### 4. 환경 변수 설정
 ```
+cd project_folder
 nano .env
 ```
-.env 생성 후 아래 실제 값으로 기입. 각 값 생성 방법은 아래 내용 참고.
+.env 생성 후 아래 실제 값으로 기입.
 ```
+#아래 코드는 readme.md 7번  -> 기본설정 파트 확인
 MONGO_URI=‘mongodb+srv://:@<cluster_url>’ 
 
-GEMINI_API_KEY=’<your_gemini_api_key>’ 
+#Gemini api key 발급 후 기입
+GEMINI_API_KEY=’<your_gemini_api_key>’
 
-GCS_BUCKET_NAME=’<your_gcs_bucket_name>’ 
+#1. Google GCS 회원가입 후 Cloud.json 생성
+#2. project_folder 내에 Cloud.json 위치 + 절대경로 복사
+GCS_BUCKET_NAME=’<GCS 가입 이름>’ 
+GOOGLE_APPLICATION_CREDENTIALS=’<Cloud.json 절대경로>’ 
 
-GOOGLE_APPLICATION_CREDENTIALS=’<your-service-account-key.json>’ 
-
+#아래 코드는 readme.md 6번 AI -> colab 파트 확인
+#기본 default 설정으로 구성 시 아래 코드는 주석 처리
 COLAB_TTS_URL=’http://colab-instance-url.../tts’
 ```
 
 
-### 5. SSL 인증서 생성
+### 5. SSL 로컬 인증서 생성(아이패드 연동 시에)
 ```
-cd project_folder 
-
 chmod +x generate_certs.sh 
 
 ./generate_certs.sh
@@ -264,6 +259,9 @@ cd momentbox-frontend 
 npm install 
 
 npm run build 
+
+#axios (JWT 토큰 갱신 로직 구현)
+npm install axios
 
 cd ..
 ```
