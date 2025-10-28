@@ -15,33 +15,45 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 
 ![onealog](/assets/readme/easyme.png)   
 
-## ✨ 주요 기능
-
-1.  **AI 일기 코치** :   
-    - LLM api 모델이 감정, 활동, 사진을 분석해 대화를 유도하고 일기 초안을 완성합니다.
-
-2. **일기 보기, 검색 및 편집 기능** :
-    - AI 일기 코치의 도움을 받아 작성한 전반적인 일기를 캘린더 형태로 확인할 수 있습니다.             
-    - 사용자가 작성했던 대화 내용, 카테고리, 날짜에 따라 검색이 가능합니다.
-    - 이전에 작성한 일기에 사진 추가, 일기 수정 등 편집이 가능합니다.
-
-3. **스마트홈 대시보드** :   
-      - 대시보드를 통해 가전 상태(TV, 세탁기, 냉장고 등)를 실시간 모니터링하고 원격 제어할 수    있습니다. 
-
-4. **주간 가전 퀘스트 시스템** :    
-      - 가전 사용, 일기 작성 등의 활동을 퀘스트로 제공하며, 포인트로 상점에서 캐릭터 아이템을 구매하고 꾸밀 수 있습니다.
-
-5. **라이프 로깅** :   
-    - AI 대화, 사진, 생성 일기를 캘린더와 갤러리 뷰로 한눈에 모아 관리할 수 있습니다.
-
-6. **AI 음성 대화 (TTS/STT)** :   
-      - 텍스트 대신 음성 입력(STT)을 지원하고, AI의 응답을 원하는 음성(TTS)으로 들을 수 있습니다.
-
-7. **메인화면 퀘스트 추천** : 
-   - 메인화면의 캐릭터가 주간 퀘스트 목록을 브리핑해줍니다.
-    - 추가로 사용자가 일기를 작성한 후에 일기를 구성하는 동안, 사용자에게 일기 작성 내용에 따라 맞춤형 퀘스트를 제공 및 안내합니다. 
 ---
 
+## ✨ 주요 기능
+
+| 기능 | 상세 내용 |
+| --- | --- |
+| **AI 일기 코치** | LLM api 모델이 감정, 활동, 사진을 분석해 대화를 유도하고 일기 초안을 완성합니다. |
+| **일기 관리** | AI의 도움을 받아 작성한 일기를 캘린더 뷰, 갤러리 뷰로 확인하고, <br> 검색 및 편집이 가능합니다. |
+| **스마트홈  <br> 대시보드** | 가전 상태(TV, 세탁기 등)를 실시간 모니터링하고 원격 제어할 수 있습니다. |
+| **주간 퀘스트 <br> 시스템** | 가전 사용, 일기 작성 등의 활동을 퀘스트로 제공하며, <br> 포인트로 상점에서 캐릭터 아이템을 구매하고 꾸밀 수 있습니다. |
+| **AI 음성 대화** | 텍스트 대신 음성 입력(STT)을 지원하고, <br> AI의 응답을 원하는 음성(TTS)으로 들을 수 있습니다. |
+| **퀘스트 추천** | 메인화면 캐릭터가 주간 퀘스트를 브리핑하거나, <br> 일기 작성 후 맞춤형 퀘스트를 안내합니다. |
+
+---
+
+## ⚙️ SW 및 HW 구성
+
+| 구분 | 내용 | 
+| --- | --- | 
+| **H/W** | Raspberry Pi 4 Model B |
+| **OS** | Raspberry Pi OS (Debian-based) |
+| **Backend** | Python, Flask, Flask-JWT-Extended |
+| **Frontend** | React, Node.js |
+| **Database** | MongoDB Atlas |
+| **AI (LLM)** | Google Gemini Pro |
+| **AI (Speech)** | Google TTS, Colab XTTS (TTS) <br> SpeechRecognition, Pydub, FFmpeg (STT) |
+| **Storage** | Google Cloud Storage (GCS) |
+
+---
+
+## 💻 개발 환경
+
+| 구분 | 도구 및 버전 |
+| --- | --- |
+| **IDE** | Visual Studio Code |
+| **Backend** | Python 3.9+, Flask, venv |
+| **Frontend** | Node.js (npm), React |
+| **VCS** | Git, GitHub |
+| **APIs** | Google Gemini, Google Cloud (GCS, TTS), LG ThinQ (시뮬레이션) |
 
 ## ✨ 향후 발전 사항
 1.  **AI 일기 코치 api 모델 향상** :   
@@ -66,52 +78,43 @@ AI가 대화를 유도하고, 감정과 사진을 엮어 자연스럽게 일기�
 ## 🏗️ 프로젝트 구조
 
 ```
-LG_embeded
-├─ project_folder/                  # 핵심 로직 (수어 인식, GPS, TTS 등)
-│    ├── feathres/
-│         ├── ai_coach/
-│         ├── conversations/ - 삭제예정
-│         ├── diaries/
-│         ├── entries/
-│         ├── lg_appliances/
-│         ├── media/
-│         ├── quests/
-│         ├── shop/
-│         └── uesr/
-│ 
-│    ├── json/
-│         └──clothes_master.json
+```bash
+/ (2025eswcontest_webos_3023)
+├── project_folder/               # 💡 메인 소스 코드
+│   ├── app.py                    # (백엔드) Flask 서버 실행, API 라우트(Blueprint) 설정
+│   ├── config.py                 # (백엔드) 환경변수 로드 및 AI 프롬프트 정의
+│   ├── extensions.py             # (백엔드) Flask 확장 (Mongo, Bcrypt, JWT)
+│   ├── features/                 # (백엔드) 기능별 API 모듈
+│   │   ├── ai_coach/             # - (API) Gemini, TTS/STT API
+│   │   ├── diaries/              # - (API) 일기(Diary) CRUD
+│   │   ├── lg_appliance/         # - (API) LG ThinQ 가전 제어 API
+│   │   ├── media/                # - (API) GCS 사진 업로드/조회 API
+│   │   ├── quests/               # - (API) 퀘스트 로직 API
+│   │   ├── shop/                 # - (API) 상점 아이템 API
+│   │   └── user/                 # - (API) 사용자 인증(JWT), 구매/착용 API
+│   │
+│   ├── json/                     # (백엔드) 초기 데이터
+│   │   └── clothes_master.json   # - 상점 아이템 마스터 데이터
+│   │
+│   ├── momentbox-frontend/       # 💡 React 프론트엔드
+│   │   ├── build/                # - (프론트) React 빌드 결과물 (Flask가 서빙)
+│   │   ├── public/               # - (프론트) index.html, static assets
+│   │   └── src/                  # - (프론트) React 컴포넌트 소스
+│   │       ├── api/              #   - axios (JWT 토큰 갱신 로직 포함)
+│   │       ├── assets/           #   - 사용된 이미지, 아이콘
+│   │       ├── constants/        #   - 캐릭터 의상 매핑
+│   │       ├── contexts/         #   - AuthContext (전역 로그인 상태)
+│   │       ├── layouts/          #   - AppLayout (공통 헤더/사이드바)
+│   │       └── pages/            #   - 각 페이지 컴포넌트
+│   │
+│   ├── .env                      # (로컬) 환경 변수 (Git 무시됨)
+│   ├── cert.pem, key.pem         # (로컬) SSL 인증서
+│   ├── Cloud.json                # (로컬) Google Cloud 서비스 계정 키 (Git 무시됨)
+│   └── generate_certs.sh         # (로컬) SSL 인증서 생성 스크립트
 │
-│    ├── momentbox-fronted/
-│         ├── build/
-│         ├── mode_modules/
-│         └──public/
-│               ├── index.html/
-│               └── manifest.json/
-│         └──src/
-│               ├── api/
-│               ├── assets/
-│               ├── constants/
-│               ├── contexts/
-│               ├── layouts/
-│               ├── pages/
-│               ├── App.js
-│               ├── Index.js
-│               └── reportWebVitals.js
-│
-│    ├── .env
-│    ├── cert.pem
-│    ├── key.pem
-│    ├── Cloud.json
-│    ├── app.py
-│    ├── config.py
-│    ├── extensions.py
-│    ├── make_public.py
-│    └──generate_certs.sh
-│
-├─ README.md
-├─ requirements.txt
-└──TTS_inference_server.ipynb
+├─ README.md                     # (본 문서)
+├─ requirements.txt              # (백엔드) Python 라이브러리 목록
+└─ TTS_inference_server.ipynb    # (AI) Colab XTTS 추론 서버
 ```
 
 ## 🚀 라즈베리파이 배포 가이드
@@ -131,7 +134,7 @@ sudo apt-get install openssl ffmpeg git
 ```
 git clone https://github.com/hyoyulman/2025eswcontest_webos_3023.git 
 
-cd main/project_folder
+cd 2025eswcontest_webos_3023
 ```
 ### 3. Python 가상환경 구성
 ```
