@@ -27,17 +27,17 @@ MomentBox는 사용자의 스마트홈 활동 데이터(LG ThinQ)를 기반으�
 
 ## 🏗️ 프로젝트 구조
 
-domain/
-├── game
-└── banner
-core/
-└── network
-feature/
-├── shop
-├── my_game
-└── history
-lib/
-└── EpoxySlider
+
+parking_system/
+
+ㄴㅡㅡㅡㅡ main.py              # 실행 진입점, 전체 시스템 제어
+├── parking.py           # 주차공간 관리/배정 알고리즘
+├── vehicle.py           # 차량 데이터 관리
+├── logger.py            # 로깅 유틸 모듈
+├── config.py            # 설정값 및 영역 정의
+├── models.py            # 데이터 클래스/구조체
+├── requirements.txt     # 외부 라이브러리 목록
+└── README.md            # 프로젝트 설명서
 
 
 ---
@@ -68,25 +68,22 @@ lib/
 
 라즈베리파이 OS(Debian 기반) 환경에서 Flask 서버를 구동하기 위한 절차입니다.
 
----
-
 ### 1. 필수 패키지 설치
 
+```
 sudo apt-get update 
 
 sudo apt-get install openssl ffmpeg git
-
----
+```
 
 ### 2. 프로젝트 다운로드
+```
 git clone https://github.com/hyoyulman/2025eswcontest_webos_3023.git 
 
 cd main/project_folder
-
----
-
+```
 ### 3. Python 가상환경 구성
-
+```
 sudo apt-get install python3 python3-pip python3-venv 
 
 python3 -m venv <가상환경_이름> 
@@ -94,16 +91,14 @@ python3 -m venv <가상환경_이름> 
 source <가상환경_이름>/bin/activate 
 
 pip install -r requirements.txt
-
----
+```
 
 ### 4. 환경 변수 설정
-
+```
 nano .env
-
-
+```
 .env 생성 후 아래 실제 값으로 기입. 각 값 생성 방법은 아래 내용 참고.
-
+```
 MONGO_URI=‘mongodb+srv://:@<cluster_url>’ 
 
 GEMINI_API_KEY=’<your_gemini_api_key>’ 
@@ -113,26 +108,25 @@ GCS_BUCKET_NAME=’<your_gcs_bucket_name>’ 
 GOOGLE_APPLICATION_CREDENTIALS=’<your-service-account-key.json>’ 
 
 COLAB_TTS_URL=’http://colab-instance-url.../tts’
+```
 
----
 
 ### 5. SSL 인증서 생성
-
+```
 cd project_folder 
 
 chmod +x generate_certs.sh 
 
 ./generate_certs.sh
-
+```
 
 실패 시 수동 명령:
-
+```
 openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365 -subj “/CN=localhost”
-
----
+```
 
 ### 6. React 프론트엔드 빌드
-
+```
 cd momentbox-frontend 
 
 npm install 
@@ -140,21 +134,18 @@ npm install 
 npm run build 
 
 cd ..
-
----
-
+```
 ### 7. Flask 서버 실행
-
+```
 source venv/bin/activate 
 
 python3 app.py   #app.py가 있는 디렉토리에 위치한 후 터미널에 입력
-
----
+```
 
 ### 8. 접속 방법
-
+```
 ifconfig. #터미널에서 wlan0주소 확인
 
 https://<라즈베리파이_IP>:5001 #
+```
 
----
