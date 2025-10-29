@@ -99,12 +99,14 @@ class UserService:
         if not category:
             raise ValueError("Item has no category defined")
 
-        new_equipped_items = {}
-        new_equipped_items[category] = item_id
+        current_equipped = user.get('equipped_items', {})
+        # 새로운 아이템의 카테고리만 업데이트합니다.
+        current_equipped[category] = item_id
 
         mongo.db.users.update_one(
             {"_id": ObjectId(user_id)},
-            {"$set": {"equipped_items": new_equipped_items}}
-        )
+            # 수정된 전체 딕셔너리를 다시 저장합니다.
+            {"$set": {"equipped_items": current_equipped}}
+)
         updated_user = self.get_user_by_id(user_id)
         return updated_user

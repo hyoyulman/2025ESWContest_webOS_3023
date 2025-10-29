@@ -128,9 +128,16 @@ export default function Store({ onClose }) {
             },
           });
 
-          setUserPoints(response.data?.points ?? 0);
+          //-----------------------------------
+          console.log('API 응답 데이터:', response.data); // <-- 응답 전체 확인
+          setUserPoints(response.data?.points ?? 0); // <-- 기본값을 0으로 설정
           setUserCloset(normalizeCloset(response.data?.closet ?? []));
           setUserEquippedItems(response.data?.equipped_items ?? {});
+          console.log('포인트 상태 업데이트 시도:', response.data?.points); // <-- 업데이트 값 확인
+          //-----------------------------------
+
+
+          
         } catch (error) {
           console.error("사용자 데이터 불러오기 실패:", error);
           setUserPoints(0);

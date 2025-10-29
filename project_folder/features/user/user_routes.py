@@ -70,23 +70,6 @@ def get_user(id):
     except Exception as e:
         return jsonify({"error": "An unexpected error occurred"}), 500
 
-@user_bp.route('/profile', methods=['GET'])
-@jwt_required() 
-def get_profile():
-    """
-    현재 로그인된 사용자의 프로필 정보를 반환합니다.
-    요청 헤더에 담긴 JWT 토큰이 유효할 때만 접근 가능합니다.
-    """
-
-    if not current_user:
-        return jsonify({"error": "User not found or token is invalid"}), 404
-    
-    return jsonify({
-        "id": str(current_user.get('_id')),
-        "email": current_user.get('email')
-
-    })
-
 @user_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True) 
 def refresh():

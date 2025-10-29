@@ -53,6 +53,8 @@ class QuestsService:
             {"_id": user_quest['_id']},
             {"$set": {"claimed": True, "claimed_at": datetime.datetime.now(datetime.timezone.utc)}}
         )
+        
+        mongo.db.users.update_one({"_id": user_object_id}, {"$inc": {"points": reward}})
         updated_user = mongo.db.users.find_one({"_id": user_object_id})
         return updated_user.get('points', 0)
     

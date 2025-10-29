@@ -115,8 +115,10 @@ export default function Main() {
     const fetchProfile = async () => {
       try {
         const res = await axiosInstance.get('/api/auth/profile');
+        console.log('Main.js API 응답:', res.data); // <-- 응답 전체 확인
         if (res.data && res.data.equipped_items) {
           setEquipped(res.data.equipped_items);
+          console.log('Main.js 착용 아이템 설정:', res.data.equipped_items);
         } else {
           setEquipped(null);
         }

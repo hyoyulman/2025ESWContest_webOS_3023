@@ -37,7 +37,7 @@ def create_app():
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
     app.config["JWT_HEADER_NAME"] = "Authorization"
     app.config["JWT_HEADER_TYPE"] = "Bearer"
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=120)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7) 
     
     mongo.init_app(app)

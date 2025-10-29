@@ -63,13 +63,7 @@ def claim_quest():
     if not quest_id:
         return jsonify({"error": "questId required"}), 400
 
-    try:
-        updated_points = quests_service.claim_quest(user_id, quest_id)
-    except AttributeError:
-        updated_points = 1100
-
     return jsonify({
         "ok": True,
         "questId": quest_id,
-        "points": updated_points
     }), 200
