@@ -265,18 +265,18 @@ F6눌러서 마이크 선택한 후 음량 조절 후 ESC
 ```
 sudo apt-get update 
 
-sudo apt-get install openssl ffmpeg git nodejs npm
+sudo apt-get install openssl ffmpeg git nodejs npm flac
 ```
 
 ### 2. 프로젝트 다운로드
 ```
-git clone https://github.com/hyoyulman/2025eswcontest_smart_3023.git 
+git clone https://github.com/hyoyulman/2025ESWContest_smart_3023.git
 
-cd Main_folder
+cd 2025ESWContest_smart_3023
 ```
 ### 3. Python 가상환경 구성
 ```
-sudo apt-get install python3 python3-pip python3-venv 
+sudo apt-get install python3 python3-pip
 
 python3 -m venv <가상환경_이름> 
 
@@ -294,19 +294,19 @@ nano .env
 .env 생성 후 아래 실제 값으로 기입.
 ```
 #아래 코드는 readme.md 7번  -> 기본설정 파트 확인
-MONGO_URI=‘mongodb+srv://:@<cluster_url>’ 
+MONGO_URI="mongodb+srv://:@<cluster_url>"
 
 #Gemini api key 발급 후 기입
-GEMINI_API_KEY=’<your_gemini_api_key>’
+GEMINI_API_KEY="<your_gemini_api_key>"
 
 #1. Google GCS 회원가입 후 Cloud.json 생성
 #2. project_folder 내에 Cloud.json 위치 + 절대경로 복사
-GCS_BUCKET_NAME=’<GCS 가입 이름>’ 
-GOOGLE_APPLICATION_CREDENTIALS=’<Cloud.json 절대경로>’ 
+GCS_BUCKET_NAME="<GCS 가입 이름>" 
+GOOGLE_APPLICATION_CREDENTIALS="<Cloud.json 절대경로>" 
 
 #아래 코드는 readme.md 6번 AI -> colab 파트 확인
 #기본 default 설정으로 구성 시 아래 코드는 주석 처리
-COLAB_TTS_URL=’http://colab-instance-url.../tts’
+COLAB_TTS_URL="http://colab-instance-url.../tts"
 ```
 
 
@@ -326,6 +326,7 @@ openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 36
 ```
 cd momentbox-frontend 
 
+#오류 발생 시에 그대로 빌드하면 오류 x
 npm install 
 
 npm run build 
