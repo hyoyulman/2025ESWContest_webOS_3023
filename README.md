@@ -270,7 +270,7 @@ sudo apt-get install openssl ffmpeg git nodejs
 
 ### 2. 프로젝트 다운로드
 ```
-git clone https://github.com/hyoyulman/2025eswcontest_webos_3023.git 
+git clone https://github.com/hyoyulman/2025eswcontest_smart_3023.git 
 
 cd Main_folder
 ```
