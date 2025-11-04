@@ -265,7 +265,7 @@ F6눌러서 마이크 선택한 후 음량 조절 후 ESC
 ```
 sudo apt-get update 
 
-sudo apt-get install openssl ffmpeg git nodejs
+sudo apt-get install openssl ffmpeg git nodejs npm
 ```
 
 ### 2. 프로젝트 다운로드
